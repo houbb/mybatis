@@ -16,12 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MapperRegister {
 
     /**
-     * 映射的类信息
-     * @since 0.0.1
-     */
-    private static final Map<Class<?>, MapperClass> MAPPER_MAP = new ConcurrentHashMap<>();
-
-    /**
      * 映射的方法信息
      * @since 0.0.1
      */
@@ -51,8 +45,6 @@ public class MapperRegister {
      */
     public MapperRegister addMapper(final Class<?> clazz,
                                     final MapperClass mapperClass) {
-        MAPPER_MAP.put(clazz, mapperClass);
-
         // 添加方法信息
         String className = clazz.getName();
         for(MapperMethod mapperMethod : mapperClass.getMethodList()) {
@@ -63,11 +55,6 @@ public class MapperRegister {
 
         return this;
     }
-
-    public MapperClass getMapper(final Class<?> clazz) {
-        return MAPPER_MAP.get(clazz);
-    }
-
 
     /**
      * 获取 mapper 方法的信息

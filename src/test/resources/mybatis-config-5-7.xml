@@ -9,9 +9,11 @@
     </dataSource>
 
     <mappers>
-
         <mapper resource="mapper/UserMapper.xml"/>
-
     </mappers>
+
+    <plugins>
+        <plugin interceptor="com.github.houbb.mybatis.plugin.SimpleLogInterceptor"/>
+    </plugins>
 
 </configuration>

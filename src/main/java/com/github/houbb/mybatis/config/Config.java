@@ -1,10 +1,11 @@
 package com.github.houbb.mybatis.config;
 
-import com.github.houbb.mybatis.mapper.MapperClass;
 import com.github.houbb.mybatis.mapper.MapperMethod;
+import com.github.houbb.mybatis.plugin.Interceptor;
 import com.github.houbb.mybatis.session.DataSource;
 
 import java.sql.Connection;
+import java.util.List;
 
 /**
  * 配置信息
@@ -23,14 +24,6 @@ public interface Config {
     /**
      * 获取映射类信息
      * @param clazz 类信息
-     * @return 结果
-     * @since 0.0.1
-     */
-    MapperClass getMapperData(final Class clazz);
-
-    /**
-     * 获取映射类信息
-     * @param clazz 类信息
      * @param methodName 方法名称
      * @return 结果
      * @since 0.0.1
@@ -44,4 +37,12 @@ public interface Config {
      * @since 0.0.1
      */
     Connection getConnection();
+
+    /**
+     * 获取拦截器列表
+     * @return 拦截器实现
+     * @since 0.0.2
+     */
+    List<Interceptor> getInterceptorList();
+
 }

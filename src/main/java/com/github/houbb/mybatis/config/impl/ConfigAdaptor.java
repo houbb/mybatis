@@ -3,9 +3,12 @@ package com.github.houbb.mybatis.config.impl;
 import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.mapper.MapperClass;
 import com.github.houbb.mybatis.mapper.MapperMethod;
+import com.github.houbb.mybatis.plugin.Interceptor;
 import com.github.houbb.mybatis.session.DataSource;
 
 import java.sql.Connection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author binbin.hou
@@ -18,11 +21,6 @@ public class ConfigAdaptor implements Config {
     }
 
     @Override
-    public MapperClass getMapperData(Class clazz) {
-        return null;
-    }
-
-    @Override
     public MapperMethod getMapperMethod(Class clazz, String methodName) {
         return null;
     }
@@ -30,5 +28,10 @@ public class ConfigAdaptor implements Config {
     @Override
     public Connection getConnection() {
         return null;
+    }
+
+    @Override
+    public List<Interceptor> getInterceptorList() {
+        return Collections.emptyList();
     }
 }

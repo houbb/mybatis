@@ -99,3 +99,7 @@ User{id=1, name='ryo', password='123456'}
 - [ ] 添加 plugin 机制
 
 - [ ] xml DTD 添加，便于使用
+
+- [ ] 添加 MBG
+
+- [ ] 添加 spring 整合实现

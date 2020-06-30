@@ -1,9 +1,11 @@
 package com.github.houbb.mybatis.config.impl;
 
+import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.mybatis.constant.DataSourceConst;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.mapper.MapperRegister;
+import com.github.houbb.mybatis.plugin.Interceptor;
 import com.github.houbb.mybatis.session.DataSource;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
@@ -11,7 +13,9 @@ import org.dom4j.Element;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,6 +54,8 @@ public class XmlConfig extends ConfigAdaptor {
      */
     private final MapperRegister mapperRegister = new MapperRegister();
 
+    private final List<Interceptor> interceptorList = new ArrayList<>();
+
     public XmlConfig(String configPath) {
         this.configPath = configPath;
 
@@ -61,6 +67,11 @@ public class XmlConfig extends ConfigAdaptor {
 
         // mapper 信息
         initMapper();
+    }
+
+    @Override
+    public List<Interceptor> getInterceptorList() {
+        return this.interceptorList;
     }
 
     @Override
@@ -130,6 +141,27 @@ public class XmlConfig extends ConfigAdaptor {
             Element mapper = (Element) item;
             String path = mapper.attributeValue("resource");
             mapperRegister.addMapper(path);
+        }
+    }
+
+    /**
+     * 初始化拦截器列表
+     *
+     * 1. 暂时不支持添加属性
+     * @since 0.0.2
+     */
+    private void initInterceptorList() {
+        Element mappers = root.element("plugins");
+
+        // 遍历所有需要初始化的 mapper 文件路径
+        for (Object item : mappers.elements("plugin")) {
+            Element mapper = (Element) item;
+            String value = mapper.attributeValue("interceptor");
+            Class clazz = ClassUtil.getClass(value);
+
+            // 创建拦截器实例
+            Interceptor interceptor = (Interceptor) ClassUtil.newInstance(clazz);
+            interceptorList.add(interceptor);
         }
     }
 

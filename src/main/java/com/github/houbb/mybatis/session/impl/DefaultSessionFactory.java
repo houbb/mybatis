@@ -1,9 +1,14 @@
 package com.github.houbb.mybatis.session.impl;
 
 import com.github.houbb.mybatis.config.Config;
+import com.github.houbb.mybatis.executor.Executor;
 import com.github.houbb.mybatis.executor.impl.SimpleExecutor;
+import com.github.houbb.mybatis.plugin.Interceptor;
+import com.github.houbb.mybatis.plugin.InterceptorChain;
 import com.github.houbb.mybatis.session.SqlSession;
 import com.github.houbb.mybatis.session.SqlSessionFactory;
+
+import java.util.List;
 
 /**
  * @author binbin.hou
@@ -23,7 +28,16 @@ public class DefaultSessionFactory implements SqlSessionFactory {
 
     @Override
     public SqlSession openSession() {
-        return new DefaultSqlSession(config, new SimpleExecutor());
+        Executor executor = new SimpleExecutor();
+        //1. 插件
+        InterceptorChain interceptorChain = new InterceptorChain();
+        List<Interceptor> interceptors = config.getInterceptorList();
+        interceptorChain.add(interceptors);
+
+        executor = (Executor) interceptorChain.pluginAll(executor);
+
+        //2. 创建
+        return new DefaultSqlSession(config, executor);
     }
 
     @Override
