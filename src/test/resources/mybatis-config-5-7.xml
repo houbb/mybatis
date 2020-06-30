@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <dataSource>
+        <property name="driver" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/test"/>
+        <property name="username" value="root"/>
+        <property name="password" value="123456"/>
+    </dataSource>
+
+    <mappers>
+
+        <mapper resource="mapper/UserMapper.xml"/>
+
+    </mappers>
+
+</configuration>
