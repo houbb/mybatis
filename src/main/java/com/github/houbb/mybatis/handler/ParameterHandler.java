@@ -10,8 +10,8 @@ import java.sql.SQLException;
  *
  * TODO: 这里应该分为两个部分
  *
- * （1）java==>jdbc 类型
- * （2）jdbc==>java 类型
+ * （1）java to jdbc 类型
+ * （2）jdbc to java 类型
  *
  * @author binbin.hou
  * @since 0.0.1
