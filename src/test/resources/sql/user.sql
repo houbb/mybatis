@@ -1,4 +1,5 @@
 -- auto-generated definition
+use test;
 create table user
 (
   id   int auto_increment

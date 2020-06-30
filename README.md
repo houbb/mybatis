@@ -92,11 +92,9 @@ User{id=1, name='ryo', password='123456'}
 
 # 后期 road-map
 
-- [ ] 类型丰富，常见的类型转换实现
+- [ ] TypeHandler 特性 
 
 - [ ] 接口拓展，按照不同的数据库进行细化
-
-- [ ] 添加 plugin 机制
 
 - [ ] xml DTD 添加，便于使用
 

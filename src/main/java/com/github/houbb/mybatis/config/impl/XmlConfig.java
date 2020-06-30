@@ -67,6 +67,9 @@ public class XmlConfig extends ConfigAdaptor {
 
         // mapper 信息
         initMapper();
+
+        // 拦截器
+        initInterceptorList();
     }
 
     @Override
