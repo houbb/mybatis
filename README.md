@@ -27,7 +27,7 @@
 <dependency>
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
@@ -35,17 +35,20 @@
 
 - sql 建表
 
+在 test 数据库执行下面的建表语句。
+
 ```sql
--- auto-generated definition
 create table user
 (
   id   int auto_increment
-    primary key,
-  name varchar(100) not null,
-  password varchar(100) not null
-);
+    primary key comment '唯一主键',
+  name varchar(100) not null comment '姓名',
+  password varchar(100) not null comment '密码',
+  create_time char(17) not null comment '创建时间'
+) CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-insert into user (name, password) value ('ryo', '123456');
+
+insert into user (name, password, create_time) value ('ryo', '123456', '20200701220301000');
 ```
 
 - 配置文件
@@ -64,6 +67,14 @@ insert into user (name, password) value ('ryo', '123456');
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
     </mappers>
+
+    <plugins>
+        <plugin interceptor="com.github.houbb.mybatis.plugin.SimpleLogInterceptor"/>
+    </plugins>
+
+    <typeHandlers>
+        <typeHandler javaType="java.util.Date" handler="com.github.houbb.mybatis.typehandler.DateTypeHandler"/>
+    </typeHandlers>
 
 </configuration>
 ```
@@ -87,12 +98,10 @@ public static void main(String[] args) {
 - 输出
 
 ```
-User{id=1, name='ryo', password='123456'}
+User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 2020}
 ```
 
 # 后期 road-map
-
-- [ ] TypeHandler 特性
 
 - [ ] 连接池 管理
 

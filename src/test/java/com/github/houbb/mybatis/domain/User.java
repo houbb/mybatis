@@ -1,5 +1,7 @@
 package com.github.houbb.mybatis.domain;
 
+import java.util.Date;
+
 /**
  * @author binbin.hou
  * @since 0.0.1
@@ -11,6 +13,8 @@ public class User {
     private String name;
 
     private String password;
+
+    private Date createTime;
 
     public Long getId() {
         return id;
@@ -36,12 +40,22 @@ public class User {
         this.password = password;
     }
 
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
+                ", createTime=" + createTime +
                 '}';
     }
+
 }

@@ -1,6 +1,8 @@
-package com.github.houbb.mybatis.handler;
+package com.github.houbb.mybatis.handler.param;
 
+import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.exception.MybatisException;
+import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,11 +20,21 @@ import java.sql.SQLException;
  */
 public class ParameterHandler {
 
+    /**
+     * 语句信息
+     * @since 0.0.1
+     */
     private final PreparedStatement statement;
 
+    /**
+     * 配置信息
+     * @since 0.0.4
+     */
+    private final Config config;
 
-    public ParameterHandler(PreparedStatement statement) {
+    public ParameterHandler(PreparedStatement statement, Config config) {
         this.statement = statement;
+        this.config = config;
     }
 
     /**
@@ -36,14 +48,17 @@ public class ParameterHandler {
      * @param objects 对象列表
      * @since 0.0.1
      */
+    @SuppressWarnings("all")
     public void setParams(final Object[] objects) {
         try {
             for(int i = 0; i < objects.length; i++) {
                 Object value = objects[i];
 
-                // 目标类型，这个后期可以根据 jdbcType 获取
-                // jdbc 下标从1开始
-                statement.setObject(i+1, value);
+                // 获取对应的处理类
+                Class valueType = value.getClass();
+                TypeHandler typeHandler = config.getTypeHandler(valueType);
+
+                typeHandler.setParameter(statement, i+1, value);
             }
         } catch (SQLException throwables) {
             throw new MybatisException(throwables);

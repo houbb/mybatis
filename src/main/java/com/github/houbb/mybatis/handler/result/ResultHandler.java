@@ -1,8 +1,11 @@
-package com.github.houbb.mybatis.handler;
+package com.github.houbb.mybatis.handler.result;
 
+import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.heaven.util.lang.reflect.ReflectFieldUtil;
+import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.exception.MybatisException;
+import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -19,10 +22,17 @@ public class ResultHandler {
      * 结果类型
      * @since 0.0.1
      */
-    private final Class resultType;
+    private final Class<?> resultType;
 
-    public ResultHandler(Class resultType) {
+    /**
+     * 配置信息
+     * @since 0.0.4
+     */
+    private final Config config;
+
+    public ResultHandler(Class<?> resultType, Config config) {
         this.resultType = resultType;
+        this.config = config;
     }
 
     /**
@@ -68,17 +78,13 @@ public class ResultHandler {
      */
     public Object getResult(Field field, ResultSet rs) {
         try {
+            String fieldName = field.getName();
+            // 驼峰转下划线，后期这里应该可以配置，或者指定注解。
+            String columnName = StringUtil.camelToUnderline(fieldName);
             Class<?> type = field.getType();
-            if (Integer.class == type) {
-                return rs.getInt(field.getName());
-            } else if (String.class == type) {
-                return rs.getString(field.getName());
-            } else if (Long.class == type) {
-                return rs.getLong(field.getName());
-            } else {
-                //TODO: 添加特定的类型处理器
-                return rs.getString(field.getName());
-            }
+
+            TypeHandler<?> typeHandler = config.getTypeHandler(type);
+            return typeHandler.getResult(rs, columnName);
         } catch (SQLException throwables) {
             throw new MybatisException(throwables);
         }

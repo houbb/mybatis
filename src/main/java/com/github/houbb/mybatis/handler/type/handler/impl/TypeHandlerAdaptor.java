@@ -20,6 +20,11 @@ public class TypeHandlerAdaptor<T> implements TypeHandler<T> {
     }
 
     @Override
+    public void setParameter(PreparedStatement ps, int i, T parameter) throws SQLException {
+        this.setParameter(ps, i, parameter, null);
+    }
+
+    @Override
     public T getResult(ResultSet rs, String columnName) throws SQLException {
         return null;
     }
@@ -31,6 +36,7 @@ public class TypeHandlerAdaptor<T> implements TypeHandler<T> {
 
     @Override
     public T getResult(CallableStatement cs, int columnIndex) throws SQLException {
+
         return null;
     }
 

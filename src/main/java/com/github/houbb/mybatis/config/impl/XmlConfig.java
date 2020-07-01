@@ -4,6 +4,8 @@ import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.mybatis.constant.DataSourceConst;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
+import com.github.houbb.mybatis.handler.type.register.TypeHandlerRegister;
+import com.github.houbb.mybatis.handler.type.register.impl.DefaultTypeHandlerRegister;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.mapper.MapperRegister;
 import com.github.houbb.mybatis.plugin.Interceptor;
@@ -55,7 +57,17 @@ public class XmlConfig extends ConfigAdaptor {
      */
     private final MapperRegister mapperRegister = new MapperRegister();
 
+    /**
+     * 拦截列表
+     * @since 0.0.3
+     */
     private final List<Interceptor> interceptorList = new ArrayList<>();
+
+    /**
+     * 类处理注册器
+     * @since 0.0.4
+     */
+    private final TypeHandlerRegister typeHandlerRegister = new DefaultTypeHandlerRegister();
 
     public XmlConfig(String configPath) {
         this.configPath = configPath;
@@ -73,7 +85,7 @@ public class XmlConfig extends ConfigAdaptor {
         initInterceptorList();
 
         // 类型处理器
-        //TODO
+        initTypeHandler();
     }
 
     @Override
@@ -102,8 +114,9 @@ public class XmlConfig extends ConfigAdaptor {
     }
 
     @Override
+    @SuppressWarnings("all")
     public <T> TypeHandler<T> getTypeHandler(Class<T> javaType) {
-        return super.getTypeHandler(javaType);
+        return (TypeHandler<T>) this.typeHandlerRegister.getTypeHandler(javaType);
     }
 
     /**
@@ -174,6 +187,33 @@ public class XmlConfig extends ConfigAdaptor {
             // 创建拦截器实例
             Interceptor interceptor = (Interceptor) ClassUtil.newInstance(clazz);
             interceptorList.add(interceptor);
+        }
+    }
+
+    /**
+     * 初始化类型处理类
+     *
+     * TODO: 这些类似的实现可以抽取为更加简单的方法实现
+     *
+     * 后续这里可以优化，自己反射获取对应的类型。
+     * @since 0.0.4
+     */
+    @SuppressWarnings("all")
+    private void initTypeHandler() {
+        Element mappers = root.element("typeHandlers");
+
+        // 遍历所有需要初始化的 mapper 文件路径
+        for (Object item : mappers.elements("typeHandler")) {
+            Element mapper = (Element) item;
+            String javaTypeClassName = mapper.attributeValue("javaType");
+            Class javaTypeClass = ClassUtil.getClass(javaTypeClassName);
+
+            String handlerClassName = mapper.attributeValue("handler");
+            Class handlerClass = ClassUtil.getClass(handlerClassName);
+
+            // 创建拦截器实例
+            TypeHandler typeHandler = (TypeHandler) ClassUtil.newInstance(handlerClass);
+            typeHandlerRegister.register(javaTypeClass, typeHandler);
         }
     }
 

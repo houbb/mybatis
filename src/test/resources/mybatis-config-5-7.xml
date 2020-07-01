@@ -16,4 +16,8 @@
         <plugin interceptor="com.github.houbb.mybatis.plugin.SimpleLogInterceptor"/>
     </plugins>
 
+    <typeHandlers>
+        <typeHandler javaType="java.util.Date" handler="com.github.houbb.mybatis.typehandler.DateTypeHandler"/>
+    </typeHandlers>
+
 </configuration>
