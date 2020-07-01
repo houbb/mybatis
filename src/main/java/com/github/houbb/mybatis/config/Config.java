@@ -1,5 +1,6 @@
 package com.github.houbb.mybatis.config;
 
+import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.plugin.Interceptor;
 import com.github.houbb.mybatis.session.DataSource;
@@ -44,5 +45,14 @@ public interface Config {
      * @since 0.0.2
      */
     List<Interceptor> getInterceptorList();
+
+    /**
+     * 获取类型处理类
+     * @param javaType Java 类
+     * @param <T> 泛型
+     * @return 处理类
+     * @since 0.0.4
+     */
+    <T> TypeHandler<T> getTypeHandler(final Class<T> javaType);
 
 }

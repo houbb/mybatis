@@ -3,6 +3,7 @@ package com.github.houbb.mybatis.config.impl;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.mybatis.constant.DataSourceConst;
 import com.github.houbb.mybatis.exception.MybatisException;
+import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.mapper.MapperRegister;
 import com.github.houbb.mybatis.plugin.Interceptor;
@@ -70,6 +71,9 @@ public class XmlConfig extends ConfigAdaptor {
 
         // 拦截器
         initInterceptorList();
+
+        // 类型处理器
+        //TODO
     }
 
     @Override
@@ -95,6 +99,11 @@ public class XmlConfig extends ConfigAdaptor {
     @Override
     public MapperMethod getMapperMethod(Class clazz, String methodName) {
         return this.mapperRegister.getMapperMethod(clazz, methodName);
+    }
+
+    @Override
+    public <T> TypeHandler<T> getTypeHandler(Class<T> javaType) {
+        return super.getTypeHandler(javaType);
     }
 
     /**
