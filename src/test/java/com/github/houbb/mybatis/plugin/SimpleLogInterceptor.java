@@ -2,7 +2,8 @@ package com.github.houbb.mybatis.plugin;
 
 import java.util.Arrays;
 
-public class SimpleLogInterceptor implements Interceptor{
+public class SimpleLogInterceptor extends AbstractInterceptor{
+
     @Override
     public void before(Invocation invocation) {
         System.out.println("----param: " + Arrays.toString(invocation.getArgs()));

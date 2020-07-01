@@ -7,6 +7,7 @@ import java.lang.reflect.Proxy;
 /**
  * 默认的代理实现
  * @since 0.0.2
+ * @author binbin.hou
  */
 public class DefaultInvocationHandler implements InvocationHandler {
 
@@ -30,15 +31,7 @@ public class DefaultInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Invocation invocation = new Invocation(target, method, args);
-
-        interceptor.before(invocation);
-
-        // invoke
-        Object result = method.invoke(target, args);
-
-        interceptor.after(invocation, result);
-
-        return result;
+        return interceptor.intercept(invocation);
     }
 
     /**

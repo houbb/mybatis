@@ -39,6 +39,16 @@ public class Invocation {
         this.args = args;
     }
 
+    /**
+     * 执行方法调用
+     * @return 结果
+     * @throws Exception 异常
+     * @since 0.0.3
+     */
+    public Object process() throws Exception {
+        return method.invoke(target, args);
+    }
+
     public Object getTarget() {
         return target;
     }

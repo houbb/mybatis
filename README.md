@@ -92,7 +92,11 @@ User{id=1, name='ryo', password='123456'}
 
 # 后期 road-map
 
-- [ ] TypeHandler 特性 
+- [ ] TypeHandler 特性
+
+- [ ] 连接池 管理
+
+- [ ] TX 管理
 
 - [ ] 接口拓展，按照不同的数据库进行细化
 
