@@ -103,11 +103,9 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 # 后期 road-map
 
-- [ ] typeAlias 实现
-
 - [ ] 对象工厂支持
 
-- [ ] 连接池 管理
+- [ ] 连接池管理
 
 - [ ] TX 管理
 
