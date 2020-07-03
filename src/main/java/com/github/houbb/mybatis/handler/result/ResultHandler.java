@@ -1,5 +1,6 @@
 package com.github.houbb.mybatis.handler.result;
 
+import com.github.houbb.heaven.util.lang.ObjectUtil;
 import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.heaven.util.lang.reflect.ReflectFieldUtil;
@@ -46,7 +47,7 @@ public class ResultHandler {
             // 基本类型，非 java 对象，直接返回即可。
 
             // 可以进行抽象
-            Object instance = resultType.newInstance();
+            Object instance = config.newInstance(resultType);
 
             // 结果大小的判断
             // 为空直接返回，大于1则报错
@@ -56,7 +57,10 @@ public class ResultHandler {
                 for(Field field : fieldList) {
                     Object value = getResult(field, resultSet);
 
-                    ReflectFieldUtil.setValue(field, instance, value);
+                    // 不为 null 才进行设置
+                    if(ObjectUtil.isNotNull(value)) {
+                        ReflectFieldUtil.setValue(field, instance, value);
+                    }
                 }
 
                 // 返回设置值后的结果
@@ -64,8 +68,8 @@ public class ResultHandler {
             }
 
             return null;
-        } catch (InstantiationException | IllegalAccessException | SQLException e) {
-            throw new MybatisException(e);
+        } catch (SQLException throwables) {
+            throw new MybatisException(throwables);
         }
     }
 

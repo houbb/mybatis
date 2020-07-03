@@ -15,6 +15,7 @@ import java.util.List;
  * @since 0.0.1
  */
 public class ConfigAdaptor implements Config {
+
     @Override
     public DataSource getDataSource() {
         return null;
@@ -42,6 +43,11 @@ public class ConfigAdaptor implements Config {
 
     @Override
     public String getTypeAlias(String alias) {
+        return null;
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> tClass) {
         return null;
     }
 }

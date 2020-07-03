@@ -13,6 +13,8 @@ import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.mapper.MapperRegister;
 import com.github.houbb.mybatis.plugin.Interceptor;
 import com.github.houbb.mybatis.session.DataSource;
+import com.github.houbb.mybatis.support.factory.ObjectFactory;
+import com.github.houbb.mybatis.support.factory.impl.DefaultObjectFactory;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
 
@@ -78,6 +80,13 @@ public class XmlConfig extends ConfigAdaptor {
      */
     private final TypeAliasRegister typeAliasRegister = new DefaultTypeAliasRegister();
 
+    /**
+     * 对象工厂类
+     *
+     * @since 0.0.6
+     */
+    private ObjectFactory objectFactory = new DefaultObjectFactory();
+
     public XmlConfig(String configPath) {
         this.configPath = configPath;
 
@@ -86,6 +95,9 @@ public class XmlConfig extends ConfigAdaptor {
 
         // 初始化数据连接信息
         initDataSource();
+
+        // 初始化对象工厂类
+        initObjectFactory();
 
         // 设置类型别称
         initTypeAlias();
@@ -134,6 +146,26 @@ public class XmlConfig extends ConfigAdaptor {
     @Override
     public String getTypeAlias(String alias) {
         return this.typeAliasRegister.getTypeOrDefault(alias);
+    }
+
+    @Override
+    public <T> T newInstance(Class<T> tClass) {
+        return this.objectFactory.newInstance(tClass);
+    }
+
+    /**
+     * 初始化对象工厂类
+     * @since 0.0.6
+     */
+    private void initObjectFactory() {
+        Element objectFactory = root.element("objectFactory");
+
+        if(objectFactory != null) {
+            String type = objectFactory.attributeValue("type");
+
+            Class<?> clazz = ClassUtil.getClass(type);
+            this.objectFactory = (ObjectFactory) ClassUtil.newInstance(clazz);
+        }
     }
 
     /**
@@ -230,7 +262,7 @@ public class XmlConfig extends ConfigAdaptor {
             Class clazz = ClassUtil.getClass(value);
 
             // 创建拦截器实例
-            Interceptor interceptor = (Interceptor) ClassUtil.newInstance(clazz);
+            Interceptor interceptor = (Interceptor) this.newInstance(clazz);
             interceptorList.add(interceptor);
         }
     }
@@ -263,7 +295,7 @@ public class XmlConfig extends ConfigAdaptor {
             Class handlerClass = ClassUtil.getClass(handlerClassName);
 
             // 创建拦截器实例
-            TypeHandler typeHandler = (TypeHandler) ClassUtil.newInstance(handlerClass);
+            TypeHandler typeHandler = (TypeHandler) this.newInstance(handlerClass);
             typeHandlerRegister.register(javaTypeClass, typeHandler);
         }
     }

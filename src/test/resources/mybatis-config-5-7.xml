@@ -20,4 +20,6 @@
         <typeHandler javaType="date" handler="com.github.houbb.mybatis.typehandler.DateTypeHandler"/>
     </typeHandlers>
 
+    <objectFactory type="com.github.houbb.mybatis.support.MyObjectFactory"/>
+
 </configuration>

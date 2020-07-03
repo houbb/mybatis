@@ -63,4 +63,13 @@ public interface Config {
      */
     String getTypeAlias(final String alias);
 
+    /**
+     * 新建对象
+     * @param tClass 类型
+     * @param <T> 泛型
+     * @return 结果
+     * @since 0.0.6
+     */
+    <T> T newInstance(final Class<T> tClass);
+
 }
