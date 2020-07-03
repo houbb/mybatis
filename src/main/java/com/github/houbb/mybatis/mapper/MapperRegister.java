@@ -1,6 +1,7 @@
 package com.github.houbb.mybatis.mapper;
 
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
+import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
 
@@ -20,6 +21,16 @@ public class MapperRegister {
      * @since 0.0.1
      */
     private static final Map<String, MapperMethod> MAPPER_METHOD_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * 配置信息
+     * @since 0.0.5
+     */
+    private final Config config;
+
+    public MapperRegister(Config config) {
+        this.config = config;
+    }
 
     /**
      * 添加映射
@@ -91,8 +102,10 @@ public class MapperRegister {
 
             mapperMethod.setType(element.getName());
             mapperMethod.setMethodName(element.attributeValue("id"));
-            mapperMethod.setParamType(ClassUtil.getClass(element.attributeValue("paramType")));
-            mapperMethod.setResultType(ClassUtil.getClass(element.attributeValue("resultType")));
+            String paramType = element.attributeValue("paramType");
+            String resultType = element.attributeValue("resultType");
+            mapperMethod.setParamType(ClassUtil.getClass(config.getTypeAlias(paramType)));
+            mapperMethod.setResultType(ClassUtil.getClass(config.getTypeAlias(resultType)));
             mapperMethod.setSql(element.getTextTrim());
 
             methodList.add(mapperMethod);

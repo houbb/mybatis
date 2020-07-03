@@ -39,4 +39,9 @@ public class ConfigAdaptor implements Config {
     public <T> TypeHandler<T> getTypeHandler(Class<T> javaType) {
         return null;
     }
+
+    @Override
+    public String getTypeAlias(String alias) {
+        return null;
+    }
 }

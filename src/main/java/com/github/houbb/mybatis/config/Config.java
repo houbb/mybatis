@@ -55,4 +55,12 @@ public interface Config {
      */
     <T> TypeHandler<T> getTypeHandler(final Class<T> javaType);
 
+    /**
+     * 获取类型的别称
+     * @param alias 别称
+     * @return 结果
+     * @since 0.0.5
+     */
+    String getTypeAlias(final String alias);
+
 }

@@ -1,6 +1,9 @@
 package com.github.houbb.mybatis.config.impl;
 
+import com.github.houbb.heaven.util.lang.ObjectUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
+import com.github.houbb.mybatis.config.alias.TypeAliasRegister;
+import com.github.houbb.mybatis.config.alias.impl.DefaultTypeAliasRegister;
 import com.github.houbb.mybatis.constant.DataSourceConst;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
@@ -55,7 +58,7 @@ public class XmlConfig extends ConfigAdaptor {
      *
      * @since 0.0.1
      */
-    private final MapperRegister mapperRegister = new MapperRegister();
+    private final MapperRegister mapperRegister = new MapperRegister(this);
 
     /**
      * 拦截列表
@@ -69,6 +72,12 @@ public class XmlConfig extends ConfigAdaptor {
      */
     private final TypeHandlerRegister typeHandlerRegister = new DefaultTypeHandlerRegister();
 
+    /**
+     * 别称注册类
+     * @since 0.0.5
+     */
+    private final TypeAliasRegister typeAliasRegister = new DefaultTypeAliasRegister();
+
     public XmlConfig(String configPath) {
         this.configPath = configPath;
 
@@ -77,6 +86,9 @@ public class XmlConfig extends ConfigAdaptor {
 
         // 初始化数据连接信息
         initDataSource();
+
+        // 设置类型别称
+        initTypeAlias();
 
         // mapper 信息
         initMapper();
@@ -119,6 +131,11 @@ public class XmlConfig extends ConfigAdaptor {
         return (TypeHandler<T>) this.typeHandlerRegister.getTypeHandler(javaType);
     }
 
+    @Override
+    public String getTypeAlias(String alias) {
+        return this.typeAliasRegister.getTypeOrDefault(alias);
+    }
+
     /**
      * 初始化配置文件信息
      *
@@ -154,6 +171,27 @@ public class XmlConfig extends ConfigAdaptor {
     }
 
     /**
+     * 初始化类型别称
+     * @since 0.0.5
+     */
+    private void initTypeAlias() {
+        Element mappers = root.element("typeAliases");
+
+        // 遍历所有需要初始化的 mapper 文件路径
+        if(ObjectUtil.isNull(mappers)) {
+            return;
+        }
+
+        for (Object item : mappers.elements("typeAlias")) {
+            Element mapper = (Element) item;
+            String alias = mapper.attributeValue("alias");
+            String type = mapper.attributeValue("type");
+
+            typeAliasRegister.register(alias, type);
+        }
+    }
+
+    /**
      * 初始化 mapper 信息
      *
      * @since 0.0.1
@@ -161,6 +199,9 @@ public class XmlConfig extends ConfigAdaptor {
     private void initMapper() {
         Element mappers = root.element("mappers");
 
+        if(ObjectUtil.isNull(mappers)) {
+            return;
+        }
         // 遍历所有需要初始化的 mapper 文件路径
         for (Object item : mappers.elements("mapper")) {
             Element mapper = (Element) item;
@@ -177,6 +218,10 @@ public class XmlConfig extends ConfigAdaptor {
      */
     private void initInterceptorList() {
         Element mappers = root.element("plugins");
+
+        if(ObjectUtil.isNull(mappers)) {
+            return;
+        }
 
         // 遍历所有需要初始化的 mapper 文件路径
         for (Object item : mappers.elements("plugin")) {
@@ -202,11 +247,17 @@ public class XmlConfig extends ConfigAdaptor {
     private void initTypeHandler() {
         Element mappers = root.element("typeHandlers");
 
+        if(ObjectUtil.isNull(mappers)) {
+            return;
+        }
+
         // 遍历所有需要初始化的 mapper 文件路径
         for (Object item : mappers.elements("typeHandler")) {
             Element mapper = (Element) item;
             String javaTypeClassName = mapper.attributeValue("javaType");
-            Class javaTypeClass = ClassUtil.getClass(javaTypeClassName);
+            // 处理别名
+            String fullTypeClassName = getTypeAlias(javaTypeClassName);
+            Class javaTypeClass = ClassUtil.getClass(fullTypeClassName);
 
             String handlerClassName = mapper.attributeValue("handler");
             Class handlerClass = ClassUtil.getClass(handlerClassName);

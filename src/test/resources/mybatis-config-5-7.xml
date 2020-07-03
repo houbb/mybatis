@@ -17,7 +17,7 @@
     </plugins>
 
     <typeHandlers>
-        <typeHandler javaType="java.util.Date" handler="com.github.houbb.mybatis.typehandler.DateTypeHandler"/>
+        <typeHandler javaType="date" handler="com.github.houbb.mybatis.typehandler.DateTypeHandler"/>
     </typeHandlers>
 
 </configuration>
