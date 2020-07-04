@@ -34,13 +34,13 @@
                 handler CDATA #REQUIRED
                 >
 
-        <!ELEMENT objectFactory ()>
+        <!ELEMENT objectFactory (#PCDATA)>
         <!ATTLIST objectFactory
                 type CDATA #REQUIRED
                 >
 
         <!ELEMENT plugins (plugin+)>
-        <!ELEMENT plugin ()>
+        <!ELEMENT plugin (#PCDATA)>
         <!ATTLIST plugin
                 interceptor CDATA #REQUIRED
                 >
