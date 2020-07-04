@@ -11,6 +11,7 @@ public interface ObjectFactory {
      * @param type Object type
      * @return 對象結果
      * @since 0.0.6
+     * @param <T> 泛型
      */
     <T> T newInstance(Class<T> type);
 
