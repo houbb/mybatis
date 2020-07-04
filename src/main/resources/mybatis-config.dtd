@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!--
+
+               Copyright 2009-2016 the original author or authors.
+
+               Licensed under the Apache License, Version 2.0 (the "License");
+               you may not use this file except in compliance with the License.
+               You may obtain a copy of the License at
+
+                  http://www.apache.org/licenses/LICENSE-2.0
+
+               Unless required by applicable law or agreed to in writing, software
+               distributed under the License is distributed on an "AS IS" BASIS,
+               WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+               See the License for the specific language governing permissions and
+               limitations under the License.
+
+        -->
+        <!ELEMENT configuration (typeAliases?, typeHandlers?, objectFactory?, plugins?, mappers?, dataSource?)>
+
+        <!ELEMENT typeAliases (typeAlias*)>
+
+        <!ELEMENT typeAlias EMPTY>
+        <!ATTLIST typeAlias
+                type CDATA #REQUIRED
+                alias CDATA #IMPLIED
+                >
+
+        <!ELEMENT typeHandlers (typeHandler*)>
+        <!ELEMENT typeHandler EMPTY>
+        <!ATTLIST typeHandler
+                javaType CDATA #REQUIRED
+                jdbcType CDATA #IMPLIED
+                handler CDATA #REQUIRED
+                >
+
+        <!ELEMENT objectFactory ()>
+        <!ATTLIST objectFactory
+                type CDATA #REQUIRED
+                >
+
+        <!ELEMENT plugins (plugin+)>
+        <!ELEMENT plugin ()>
+        <!ATTLIST plugin
+                interceptor CDATA #REQUIRED
+                >
+
+        <!ELEMENT dataSource (property*)>
+        <!ELEMENT property EMPTY>
+        <!ATTLIST property
+                name CDATA #REQUIRED
+                value CDATA #REQUIRED
+                >
+
+        <!ELEMENT mappers (mapper*)>
+        <!ELEMENT mapper EMPTY>
+        <!ATTLIST mapper
+                resource CDATA #IMPLIED
+                url CDATA #IMPLIED
+                class CDATA #IMPLIED
+                >
