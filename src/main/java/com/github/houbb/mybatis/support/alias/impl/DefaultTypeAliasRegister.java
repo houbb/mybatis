@@ -1,7 +1,7 @@
-package com.github.houbb.mybatis.config.alias.impl;
+package com.github.houbb.mybatis.support.alias.impl;
 
 import com.github.houbb.heaven.util.lang.StringUtil;
-import com.github.houbb.mybatis.config.alias.TypeAliasRegister;
+import com.github.houbb.mybatis.support.alias.TypeAliasRegister;
 
 import java.math.BigDecimal;
 import java.util.*;

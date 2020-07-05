@@ -1,26 +1,27 @@
 package com.github.houbb.mybatis.config.impl;
 
 import com.github.houbb.heaven.util.lang.ObjectUtil;
+import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
-import com.github.houbb.mybatis.config.alias.TypeAliasRegister;
-import com.github.houbb.mybatis.config.alias.impl.DefaultTypeAliasRegister;
+import com.github.houbb.mybatis.datasource.unpooled.UnPooledDataSource;
+import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 import com.github.houbb.mybatis.handler.type.register.TypeHandlerRegister;
 import com.github.houbb.mybatis.handler.type.register.impl.DefaultTypeHandlerRegister;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.mapper.MapperRegister;
 import com.github.houbb.mybatis.plugin.Interceptor;
-import com.github.houbb.mybatis.session.DataSourceFactory;
+import com.github.houbb.mybatis.support.alias.TypeAliasRegister;
+import com.github.houbb.mybatis.support.alias.impl.DefaultTypeAliasRegister;
 import com.github.houbb.mybatis.support.factory.ObjectFactory;
 import com.github.houbb.mybatis.support.factory.impl.DefaultObjectFactory;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * 配置信息
@@ -49,7 +50,7 @@ public class XmlConfig extends ConfigAdaptor {
      *
      * @since 0.0.8
      */
-    private DataSourceFactory dataSourceFactory;
+    private DataSource dataSource;
 
     /**
      * mapper 注册类
@@ -90,7 +91,7 @@ public class XmlConfig extends ConfigAdaptor {
         initProperties();
 
         // 初始化数据连接信息
-        initDataSourceFactory();
+        initDataSource();
 
         // 初始化对象工厂类
         initObjectFactory();
@@ -115,7 +116,7 @@ public class XmlConfig extends ConfigAdaptor {
 
     @Override
     public DataSource getDataSource() {
-        return this.dataSourceFactory.getDataSource();
+        return this.dataSource;
     }
 
     @Override
@@ -166,19 +167,37 @@ public class XmlConfig extends ConfigAdaptor {
     /**
      * 初始化数据源
      *
-     * @since 0.0.1
+     * @since 0.0.8
      */
-    private void initDataSourceFactory() {
+    private void initDataSource() {
         // 根据配置初始化连接信息
         Element dsElem = root.element("dataSource");
 
-        Map<String, String> map = new HashMap<>(4);
+        Properties properties = new Properties();
 
         for (Object property : dsElem.elements("property")) {
             Element element = (Element) property;
             String name = element.attributeValue("name");
             String value = element.attributeValue("value");
-            map.put("jdbc." + name, value);
+
+            final String key = "jdbc."+name;
+            properties.setProperty(key, value);
+        }
+
+        // 反射构建对象
+        String type = dsElem.attributeValue("type");
+        if(StringUtil.isEmpty(type)) {
+            // 后期可以调整为 pooled 实现
+            type = UnPooledDataSource.class.getName();
+        }
+
+        Class<?> dataSourceClass = ClassUtil.getClass(type);
+        try {
+            Constructor<?> constructor = dataSourceClass.getConstructor(Properties.class);
+            this.dataSource = (DataSource) constructor.newInstance(properties);
+        } catch (NoSuchMethodException | IllegalAccessException
+                | InstantiationException | InvocationTargetException e) {
+            throw new MybatisException("DataSource class must has public constructor with args properties!");
         }
     }
 

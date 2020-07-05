@@ -14,27 +14,6 @@ import java.util.Map;
  */
 public class ConfigTest {
 
-//    @Test
-//    public void propertiesTest() {
-//        String path = "mybatis-config-5-7.properties";
-//
-//        Config config = new PropertiesConfig(path);
-//        DataSource dataSource = config.getDataSource();
-//
-//        Assert.assertEquals("DataSource{url='jdbc:mysql://localhost:3306/test', driver='com.mysql.jdbc.Driver', username='root', password='123456'}", dataSource.toString());
-//    }
-
-
-    @Test
-    public void xmlTest() {
-        String path = "mybatis-config-5-7.xml";
-
-        Config config = new XmlConfig(path);
-        Map<String, String> dataSource = config.getDataSourceConfig();
-
-        Assert.assertEquals("DataSource{url='jdbc:mysql://localhost:3306/test', driver='com.mysql.jdbc.Driver', username='root', password='123456'}", dataSource.toString());
-    }
-
     @Test
     public void xmlMapperTest() {
         String path = "mybatis-config-5-7.xml";

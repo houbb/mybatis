@@ -1,52 +1,61 @@
-package com.github.houbb.mybatis.session.impl;
+package com.github.houbb.mybatis.datasource;
 
 import com.github.houbb.heaven.util.common.ArgUtil;
-import com.github.houbb.mybatis.exception.MybatisException;
+import com.github.houbb.mybatis.constant.DataSourceConst;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * @author binbin.hou
- * @since 1.0.0
+ * 抽象实现
+ * @since 0.0.8
  */
-public class UnPooledDataSource implements DataSource {
+public abstract class AbstractDataSource implements DataSource {
 
-    private String driver;
+    /**
+     * 驱动
+     * @since 0.0.8
+     */
+    protected final String driver;
 
-    private String url;
+    /**
+     * 地址
+     * @since 0.0.8
+     */
+    protected final String url;
 
-    private String username;
+    /**
+     * 用户名
+     * @since 0.0.8
+     */
+    protected final String username;
 
-    private String password;
+    /**
+     * 密码
+     * @since 0.0.8
+     */
+    protected final String password;
 
-    public UnPooledDataSource(String driver, String url, String username, String password) {
+    public AbstractDataSource(final Properties properties) {
+        String driver = properties.getProperty(DataSourceConst.DRIVER);
+        String url = properties.getProperty(DataSourceConst.URL);
+        ArgUtil.notEmpty(driver, "driver");
+        ArgUtil.notEmpty(url, "url");
+
         this.driver = driver;
         this.url = url;
-        this.username = username;
-        this.password = password;
+        this.username = properties.getProperty(DataSourceConst.USERNAME);
+        this.password = properties.getProperty(DataSourceConst.PASSWORD);
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return this.getConnection(username, password);
-    }
-
-    @Override
-    public Connection getConnection(String username, String password) throws SQLException {
-        ArgUtil.notEmpty(username, "username");
-        ArgUtil.notEmpty(password, "password");
-        try {
-            Class.forName(driver);
-            return DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException e) {
-            throw new MybatisException(e);
-        }
+        return getConnection(username, password);
     }
 
     @Override

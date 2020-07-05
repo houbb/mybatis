@@ -11,6 +11,8 @@ public final class DataSourceConst {
 
     private DataSourceConst(){}
 
+    public static final String JDBC_PREFIX = "jdbc.";
+
     public static final String URL = "jdbc.url";
 
     public static final String DRIVER = "jdbc.driver";

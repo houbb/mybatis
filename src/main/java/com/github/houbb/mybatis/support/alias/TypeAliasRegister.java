@@ -1,4 +1,4 @@
-package com.github.houbb.mybatis.config.alias;
+package com.github.houbb.mybatis.support.alias;
 
 /**
  * @author binbin.hou

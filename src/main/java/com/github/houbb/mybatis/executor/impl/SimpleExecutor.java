@@ -34,7 +34,7 @@ public class SimpleExecutor implements Executor {
     @SuppressWarnings("unchecked")
     public <T> T query(final Config config,
                        MapperMethod method, Object[] args) {
-        try(Connection connection = config.getConnection();
+        try(Connection connection = config.getDataSource().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(method.getSql());) {
             // 2. 处理参数
             ParameterHandler parameterHandler = new ParameterHandler(preparedStatement, config);
