@@ -4,7 +4,7 @@
         "mybatis-config.dtd">
 <configuration>
 
-    <dataSource>
+    <dataSource type="com.github.houbb.mybatis.session.impl.UnPooledDataSourceFactory">
         <property name="driver" value="com.mysql.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql://localhost:3306/test"/>
         <property name="username" value="root"/>

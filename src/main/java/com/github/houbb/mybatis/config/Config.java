@@ -3,10 +3,11 @@ package com.github.houbb.mybatis.config;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.plugin.Interceptor;
-import com.github.houbb.mybatis.session.DataSource;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 配置信息
@@ -14,13 +15,6 @@ import java.util.List;
  * @since 0.0.1
  */
 public interface Config {
-
-    /**
-     * 获取数据源信息
-     * @return 数据源配置
-     * @since 0.0.1
-     */
-    DataSource getDataSource();
 
     /**
      * 获取映射类信息
@@ -37,7 +31,7 @@ public interface Config {
      * @return 连接信息
      * @since 0.0.1
      */
-    Connection getConnection();
+    DataSource getDataSource();
 
     /**
      * 获取拦截器列表

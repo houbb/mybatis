@@ -4,9 +4,8 @@ import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.plugin.Interceptor;
-import com.github.houbb.mybatis.session.DataSource;
 
-import java.sql.Connection;
+import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,17 +16,12 @@ import java.util.List;
 public class ConfigAdaptor implements Config {
 
     @Override
-    public DataSource getDataSource() {
-        return null;
-    }
-
-    @Override
     public MapperMethod getMapperMethod(Class clazz, String methodName) {
         return null;
     }
 
     @Override
-    public Connection getConnection() {
+    public DataSource getDataSource() {
         return null;
     }
 

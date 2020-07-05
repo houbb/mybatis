@@ -29,6 +29,9 @@
                 >
 
         <!ELEMENT dataSource (property*)>
+        <!ATTLIST dataSource
+                type CDATA #IMPLIED
+                >
         <!ELEMENT property EMPTY>
         <!ATTLIST property
                 name CDATA #REQUIRED

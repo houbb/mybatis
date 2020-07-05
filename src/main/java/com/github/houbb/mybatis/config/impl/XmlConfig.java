@@ -4,23 +4,19 @@ import com.github.houbb.heaven.util.lang.ObjectUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.mybatis.config.alias.TypeAliasRegister;
 import com.github.houbb.mybatis.config.alias.impl.DefaultTypeAliasRegister;
-import com.github.houbb.mybatis.constant.DataSourceConst;
-import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 import com.github.houbb.mybatis.handler.type.register.TypeHandlerRegister;
 import com.github.houbb.mybatis.handler.type.register.impl.DefaultTypeHandlerRegister;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.mapper.MapperRegister;
 import com.github.houbb.mybatis.plugin.Interceptor;
-import com.github.houbb.mybatis.session.DataSource;
+import com.github.houbb.mybatis.session.DataSourceFactory;
 import com.github.houbb.mybatis.support.factory.ObjectFactory;
 import com.github.houbb.mybatis.support.factory.impl.DefaultObjectFactory;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,9 +47,9 @@ public class XmlConfig extends ConfigAdaptor {
     /**
      * 数据源信息
      *
-     * @since 0.0.1
+     * @since 0.0.8
      */
-    private DataSource dataSource;
+    private DataSourceFactory dataSourceFactory;
 
     /**
      * mapper 注册类
@@ -94,7 +90,7 @@ public class XmlConfig extends ConfigAdaptor {
         initProperties();
 
         // 初始化数据连接信息
-        initDataSource();
+        initDataSourceFactory();
 
         // 初始化对象工厂类
         initObjectFactory();
@@ -119,17 +115,7 @@ public class XmlConfig extends ConfigAdaptor {
 
     @Override
     public DataSource getDataSource() {
-        return this.dataSource;
-    }
-
-    @Override
-    public Connection getConnection() {
-        try {
-            Class.forName(dataSource.driver());
-            return DriverManager.getConnection(dataSource.url(), dataSource.username(), dataSource.password());
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new MybatisException(e);
-        }
+        return this.dataSourceFactory.getDataSource();
     }
 
     @Override
@@ -182,11 +168,10 @@ public class XmlConfig extends ConfigAdaptor {
      *
      * @since 0.0.1
      */
-    private void initDataSource() {
+    private void initDataSourceFactory() {
         // 根据配置初始化连接信息
-        this.dataSource = new DataSource();
-
         Element dsElem = root.element("dataSource");
+
         Map<String, String> map = new HashMap<>(4);
 
         for (Object property : dsElem.elements("property")) {
@@ -195,11 +180,6 @@ public class XmlConfig extends ConfigAdaptor {
             String value = element.attributeValue("value");
             map.put("jdbc." + name, value);
         }
-
-        dataSource.username(map.get(DataSourceConst.USERNAME))
-                .password(map.get(DataSourceConst.PASSWORD))
-                .driver(map.get(DataSourceConst.DRIVER))
-                .url(map.get(DataSourceConst.URL));
     }
 
     /**
