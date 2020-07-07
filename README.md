@@ -105,9 +105,15 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 # 后期 road-map
 
-- [ ] 连接池管理
-
 - [ ] 添加 `#{}` 的对象属性解析
+
+1. 单个属性随便命名
+
+2. 多个属性反射获取
+
+- [ ] 添加 list 结果处理
+
+- [ ] 连接池管理
 
 - [ ] 数据库厂商标识（databaseIdProvider）
 
