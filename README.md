@@ -111,8 +111,6 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 2. 多个属性反射获取
 
-- [ ] 添加 list 结果处理
-
 - [ ] 连接池管理
 
 - [ ] 数据库厂商标识（databaseIdProvider）
