@@ -1,5 +1,6 @@
 package com.github.houbb.mybatis.handler.param;
 
+import com.github.houbb.heaven.util.util.ArrayUtil;
 import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
@@ -51,6 +52,11 @@ public class ParameterHandler {
     @SuppressWarnings("all")
     public void setParams(final Object[] objects) {
         try {
+            // 跳过处理
+            if(ArrayUtil.isEmpty(objects)) {
+                return;
+            }
+
             for(int i = 0; i < objects.length; i++) {
                 Object value = objects[i];
 

@@ -7,6 +7,8 @@ import com.github.houbb.mybatis.mapper.UserMapper;
 import com.github.houbb.mybatis.session.SqlSession;
 import com.github.houbb.mybatis.session.impl.DefaultSessionFactory;
 
+import java.util.List;
+
 /**
  * @author binbin.hou
  * @since 1.0.0
@@ -21,6 +23,9 @@ public class Main {
 
         User user = userMapper.selectById(1L);
         System.out.println(user);
+
+        List<User> users = userMapper.selectList();
+        System.out.println(users);
     }
 
 }

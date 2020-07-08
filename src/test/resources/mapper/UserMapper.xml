@@ -5,4 +5,8 @@
         select name, password from user where id = ?
     </select>
 
+    <select id="selectList" resultType="com.github.houbb.mybatis.domain.User">
+        select name, password from user
+    </select>
+
 </mapper>

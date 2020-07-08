@@ -10,7 +10,7 @@ import java.sql.SQLException;
  * @author binbin.hou
  * @since 0.0.4
  */
-public class StringTypeHandler extends TypeHandlerAdaptor<String> {
+public class StringTypeHandler extends AbstractTypeHandler<String> {
 
     @Override
     public void setParameter(PreparedStatement ps, int i, String parameter, JdbcType jdbcType) throws SQLException {

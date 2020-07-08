@@ -1,5 +1,7 @@
 package com.github.houbb.mybatis.mapper;
 
+import java.lang.reflect.Method;
+
 /**
  * @author binbin.hou
  * @since 0.0.1
@@ -29,6 +31,12 @@ public class MapperMethod {
      * @since 0.0.1
      */
     private String methodName;
+
+    /**
+     * 对应的方法元数据信息
+     * @since 0.0.10
+     */
+    private Method method;
 
     /**
      * 结果类型
@@ -83,12 +91,21 @@ public class MapperMethod {
         this.paramType = paramType;
     }
 
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
+
     @Override
     public String toString() {
         return "MapperMethod{" +
                 "type='" + type + '\'' +
                 ", sql='" + sql + '\'' +
                 ", methodName='" + methodName + '\'' +
+                ", method=" + method +
                 ", resultType=" + resultType +
                 ", paramType=" + paramType +
                 '}';

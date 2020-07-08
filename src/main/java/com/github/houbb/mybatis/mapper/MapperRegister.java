@@ -1,11 +1,14 @@
 package com.github.houbb.mybatis.mapper;
 
+import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -93,18 +96,26 @@ public class MapperRegister {
         // 接口名称
         String namespace = root.attributeValue("namespace");
         List list = root.elements();
-        List<MapperMethod> methodList = new ArrayList<>(list.size());
+        Map<String, Method> methodMap = buildMethodMap(namespace);
 
+        List<MapperMethod> methodList = new ArrayList<>(list.size());
         // 遍历下面的所有元素
         for(Object item : list) {
             Element element = (Element) item;
             MapperMethod mapperMethod = new MapperMethod();
-
             mapperMethod.setType(element.getName());
-            mapperMethod.setMethodName(element.attributeValue("id"));
+            String methodName = element.attributeValue("id");
+            mapperMethod.setMethodName(methodName);
+            Method method = methodMap.get(methodName);
+            mapperMethod.setMethod(method);
             String paramType = element.attributeValue("paramType");
             String resultType = element.attributeValue("resultType");
-            mapperMethod.setParamType(ClassUtil.getClass(config.getTypeAlias(paramType)));
+
+            // 入参可能不存在
+            if(StringUtil.isNotEmpty(paramType)) {
+                mapperMethod.setParamType(ClassUtil.getClass(config.getTypeAlias(paramType)));
+            }
+
             mapperMethod.setResultType(ClassUtil.getClass(config.getTypeAlias(resultType)));
             mapperMethod.setSql(element.getTextTrim());
 
@@ -114,6 +125,25 @@ public class MapperRegister {
         mapperClass.setNamespace(namespace);
         mapperClass.setMethodList(methodList);
         return mapperClass;
+    }
+
+    /**
+     * 获取方法的 map 信息
+     *
+     * TODO: 此处暂时不考虑重名的情况
+     * @param namespace 命名空间
+     * @return 结果
+     * @since 0.0.10
+     */
+    private Map<String, Method> buildMethodMap(final String namespace) {
+        Class clazz = ClassUtil.getClass(namespace);
+        Method[] methods = clazz.getMethods();
+        Map<String, Method> resultMap = new HashMap<>(methods.length);
+
+        for(Method method : methods) {
+            resultMap.put(method.getName(), method);
+        }
+        return resultMap;
     }
 
 }

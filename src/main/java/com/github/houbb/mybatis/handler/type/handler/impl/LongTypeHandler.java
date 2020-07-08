@@ -10,11 +10,10 @@ import java.sql.SQLException;
  * @author binbin.hou
  * @since 0.0.4
  */
-public class LongTypeHandler extends TypeHandlerAdaptor<Long> {
+public class LongTypeHandler extends AbstractTypeHandler<Long> {
 
     @Override
     public void setParameter(PreparedStatement ps, int i, Long parameter, JdbcType jdbcType) throws SQLException {
-        //TODO: 这里可以根据 jdbc 的类型，做区别对待
         ps.setLong(i, parameter);
     }
 
