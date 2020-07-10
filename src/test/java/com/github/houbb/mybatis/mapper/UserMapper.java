@@ -14,4 +14,6 @@ public interface UserMapper {
 
     List<User> selectList();
 
+    User selectByIdWithTemplate(final long id);
+
 }

@@ -27,7 +27,7 @@
 <dependency>
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.11</version>
 </dependency>
 ```
 
@@ -105,6 +105,8 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 # 后期 road-map
 
+- [ ] 添加 ResultMap 基础映射
+
 - [ ] 添加 `#{}` 的对象属性解析
 
 1. 单个属性随便命名
@@ -113,10 +115,13 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 - [ ] 连接池管理
 
+- [ ] TX 管理
+
 - [ ] 数据库厂商标识（databaseIdProvider）
 
 - [ ] 添加 MBG
 
 - [ ] 添加 spring 整合实现
 
-- [ ] TX 管理
+- [ ] 添加 spring-boot 整合实现
+

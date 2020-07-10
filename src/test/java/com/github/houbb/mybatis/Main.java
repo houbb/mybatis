@@ -26,6 +26,9 @@ public class Main {
 
         List<User> users = userMapper.selectList();
         System.out.println(users);
+
+        User userRef = userMapper.selectByIdWithTemplate(1L);
+        System.out.println(userRef);
     }
 
 }

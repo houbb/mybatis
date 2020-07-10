@@ -1,6 +1,7 @@
 package com.github.houbb.mybatis.mapper;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @author binbin.hou
@@ -24,6 +25,12 @@ public class MapperMethod {
      * @since 0.0.1
      */
     private String sql;
+
+    /**
+     * sql item 列表
+     * @since 0.0.11
+     */
+    private List<MapperSqlItem> sqlItemList;
 
     /**
      * 方法名称
@@ -99,11 +106,20 @@ public class MapperMethod {
         this.method = method;
     }
 
+    public List<MapperSqlItem> getSqlItemList() {
+        return sqlItemList;
+    }
+
+    public void setSqlItemList(List<MapperSqlItem> sqlItemList) {
+        this.sqlItemList = sqlItemList;
+    }
+
     @Override
     public String toString() {
         return "MapperMethod{" +
                 "type='" + type + '\'' +
                 ", sql='" + sql + '\'' +
+                ", sqlItemList=" + sqlItemList +
                 ", methodName='" + methodName + '\'' +
                 ", method=" + method +
                 ", resultType=" + resultType +

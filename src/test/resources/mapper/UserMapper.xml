@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapper namespace="com.github.houbb.mybatis.mapper.UserMapper">
 
+    <sql id="baseColumn">
+        name, password
+    </sql>
+
+    <sql id="baseCondition">
+        id = ?
+    </sql>
+
+    <select id = "selectByIdWithTemplate" paramType="long"
+            resultType = "com.github.houbb.mybatis.domain.User">
+        select <include refid="baseColumn"/> from user where <include refid="baseCondition"/>
+    </select>
+
     <select id = "selectById" paramType="long" resultType = "com.github.houbb.mybatis.domain.User">
         select name, password from user where id = ?
     </select>
@@ -8,5 +21,7 @@
     <select id="selectList" resultType="com.github.houbb.mybatis.domain.User">
         select name, password from user
     </select>
+
+
 
 </mapper>
