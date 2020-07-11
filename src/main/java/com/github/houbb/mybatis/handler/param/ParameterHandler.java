@@ -50,7 +50,8 @@ public class ParameterHandler {
      * （1）设置处理对应的值
      * （2）设置处理对应的类型
      *
-     * @param objects 对象列表
+     * @param psNames 参数列表
+     * @param paramMap 参数值
      * @since 0.0.1
      */
     @SuppressWarnings("all")
