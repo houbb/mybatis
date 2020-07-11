@@ -6,6 +6,8 @@ import com.github.houbb.mybatis.domain.User;
 import com.github.houbb.mybatis.mapper.UserMapper;
 import com.github.houbb.mybatis.session.SqlSession;
 import com.github.houbb.mybatis.session.impl.DefaultSessionFactory;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.List;
 
@@ -15,20 +17,34 @@ import java.util.List;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    private UserMapper userMapper;
+
+    @Before
+    public void initUserMapper() {
         Config config = new XmlConfig("mybatis-config-5-7.xml");
 
         SqlSession sqlSession = new DefaultSessionFactory(config).openSession();
-        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        this.userMapper = sqlSession.getMapper(UserMapper.class);
+    }
 
-        User user = userMapper.selectById(1L);
-        System.out.println(user);
+    @Test
+    public void selectByIdTest() {
+        System.out.println(userMapper.selectById(1L));
+    }
 
-        List<User> users = userMapper.selectList();
-        System.out.println(users);
+    @Test
+    public void selectListTest() {
+        System.out.println(userMapper.selectList());
+    }
 
-        User userRef = userMapper.selectByIdWithTemplate(1L);
-        System.out.println(userRef);
+    @Test
+    public void selectMapTest() {
+        System.out.println(userMapper.selectMap(1L));
+    }
+
+    @Test
+    public void selectByIdWithResultMapTest() {
+        System.out.println(userMapper.selectByIdWithResultMap(1L));
     }
 
 }

@@ -1,13 +1,19 @@
 package com.github.houbb.mybatis.handler.result;
 
 import com.github.houbb.heaven.util.lang.ObjectUtil;
+import com.github.houbb.heaven.util.lang.StringUtil;
+import com.github.houbb.heaven.util.lang.reflect.ReflectMethodUtil;
 import com.github.houbb.heaven.util.util.CollectionUtil;
 import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.result.impl.MapResultTypeHandler;
 import com.github.houbb.mybatis.handler.result.impl.ObjectRefResultTypeHandler;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
+import com.github.houbb.mybatis.mapper.MapperClass;
+import com.github.houbb.mybatis.mapper.MapperMethod;
+import com.github.houbb.mybatis.mapper.component.MapperResultMapItem;
 
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,10 +44,43 @@ public class ResultHandler {
      */
     private final Config config;
 
-    public ResultHandler(Class<?> resultType, Class<?> methodReturnType, Config config) {
-        this.resultType = resultType;
-        this.methodReturnType = methodReturnType;
+    /**
+     * 对应的方法信息
+     * @since 0.0.12
+     */
+    private final Method method;
+
+    final MapperMethod mapperMethod;
+
+    public ResultHandler(final MapperMethod mapperMethod, Config config) {
+        this.resultType = mapperMethod.getResultType();
+        this.methodReturnType = mapperMethod.getMethod().getReturnType();
         this.config = config;
+
+        this.method = mapperMethod.getMethod();
+
+        this.mapperMethod = mapperMethod;
+    }
+
+    /**
+     * 获取结果映射列表
+     * @return 结果
+     * @since 0.0.12
+     */
+    private List<MapperResultMapItem> getResultMapMapping() {
+        String resultMap = mapperMethod.getResultMap();
+        if(StringUtil.isEmpty(resultMap)) {
+            return null;
+        }
+        final MapperClass mapperClass = mapperMethod.getRefClass();
+        for(Map.Entry<String, List<MapperResultMapItem>> entry : mapperClass.getResultMapMapping().entrySet()) {
+            String name = entry.getKey();
+            if(resultMap.equals(name)) {
+                return entry.getValue();
+            }
+        }
+
+        throw new MybatisException("Not found result map for name: " + resultMap);
     }
 
     /**
@@ -57,6 +96,9 @@ public class ResultHandler {
             // 结果大小的判断
             // 为空直接返回，大于1则报错
             if(resultSet.next()) {
+                // 分成为两种情况
+                // 1. 根据 resultType 反射获取字段
+                // 2. 根据 resultMap 获取反射字段信息
                 Object value = getValueByResultType(resultSet);
                 resultList.add(value);
             }
@@ -99,23 +141,54 @@ public class ResultHandler {
             TypeHandler<?> typeHandler = config.getTypeHandler(resultType);
             if(ObjectUtil.isNotNull(typeHandler)) {
                 // 固定获取第一个元素
-                // TOOD: 后续可以考虑优化
+                // TODO: 后续可以考虑优化
                 return typeHandler.getResult(resultSet, 1);
             }
+
+            ResultHandlerContext context = ResultHandlerContext.newInstance()
+                    .config(config)
+                    .resultMapId(mapperMethod.getResultMap())
+                    .resultMapMapping(getResultMapMapping())
+                    .resultSet(resultSet);
+            // 特殊处理返回值
+            Class<?> actualReturnType = this.resultType;
+            if(ObjectUtil.isNull(actualReturnType)) {
+                actualReturnType = getResultTypeByMethod();
+            }
+            context.resultType(actualReturnType);
+
 
             //2. map
             if(Map.class.equals(resultType)) {
                 return MapResultTypeHandler.getInstance()
-                        .buildResult(config, resultSet, resultType);
+                        .buildResult(context);
             }
 
             //3. 引用对象
             return ObjectRefResultTypeHandler.getInstance()
-                    .buildResult(config, resultSet, resultType);
+                    .buildResult(context);
         } catch (SQLException throwables) {
             throw new MybatisException(throwables);
         }
     }
 
+    /**
+     * 根绝方法的返回值，获取元素对应的结果
+     * @return 结果类型
+     * @since 0.0.12
+     */
+    private Class<?> getResultTypeByMethod() {
+        // 列表
+        if(Map.class.equals(methodReturnType)) {
+            return Map.class;
+        }
+        if(List.class.equals(methodReturnType)) {
+            // 根据泛型对应的元素
+            return ReflectMethodUtil.getGenericReturnParamType(method, 0);
+        }
+
+        // 返回本身
+        return methodReturnType;
+    }
 
 }

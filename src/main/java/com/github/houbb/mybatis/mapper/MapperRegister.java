@@ -5,8 +5,11 @@ import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.heaven.util.util.CollectionUtil;
 import com.github.houbb.mybatis.config.Config;
+import com.github.houbb.mybatis.constant.MapperAttrConst;
 import com.github.houbb.mybatis.constant.MapperTypeConst;
+import com.github.houbb.mybatis.constant.enums.MapperSqlType;
 import com.github.houbb.mybatis.exception.MybatisException;
+import com.github.houbb.mybatis.mapper.component.MapperResultMapItem;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultElement;
@@ -100,20 +103,24 @@ public class MapperRegister {
         Element root = XmlUtil.getRoot(path);
 
         // 接口名称
-        String namespace = root.attributeValue("namespace");
-        List list = root.elements();
+        String namespace = root.attributeValue(MapperAttrConst.NAMESPACE);
+        List<?> list = root.elements();
         Map<String, Method> methodMap = buildMethodMap(namespace);
 
         List<MapperMethod> methodList = new ArrayList<>();
         List<MapperSqlTemplate> sqlTemplateList = new ArrayList<>();
+        Map<String, List<MapperResultMapItem>> resultMapMapping = new HashMap<>();
         // 遍历下面的所有元素
         for(Object item : list) {
             Element element = (Element) item;
             MapperMethod mapperMethod = new MapperMethod();
+            // 设置依赖的 class
+            mapperMethod.setRefClass(mapperClass);
+
             String type = element.getName();
             mapperMethod.setType(type);
             //select
-            String id = element.attributeValue("id");
+            String id = element.attributeValue(MapperAttrConst.ID);
 
             //sql
             if(MapperTypeConst.SQL.equals(type)) {
@@ -121,39 +128,30 @@ public class MapperRegister {
                 sqlTemplate.setId(id);
                 sqlTemplate.setSql(element.getTextTrim());
                 sqlTemplateList.add(sqlTemplate);
-            }
-            if(MapperTypeConst.SELECT.equals(type)) {
+            } else if(MapperTypeConst.RESULT_MAP.equals(type)) {
+                List<MapperResultMapItem> mapItems = buildResultMapItems(element);
+                resultMapMapping.put(id, mapItems);
+            } else {
                 mapperMethod.setMethodName(id);
                 Method method = methodMap.get(id);
                 mapperMethod.setMethod(method);
-                String paramType = element.attributeValue("paramType");
-                String resultType = element.attributeValue("resultType");
 
-                // 入参可能不存在
+                String paramType = element.attributeValue(MapperAttrConst.PARAM_TYPE);
+                String resultType = element.attributeValue(MapperAttrConst.RESULT_TYPE);
+                String resultMap = element.attributeValue(MapperAttrConst.RESULT_MAP);
                 if(StringUtil.isNotEmpty(paramType)) {
+                    // 入参可能不存在
                     mapperMethod.setParamType(ClassUtil.getClass(config.getTypeAlias(paramType)));
                 }
-
-                mapperMethod.setResultType(ClassUtil.getClass(config.getTypeAlias(resultType)));
-                // 使用 content 替代简单的文本
-                List contentList = element.content();
-                List<MapperSqlItem> sqlItemList = new ArrayList<>();
-                for(Object content : contentList) {
-                    MapperSqlItem sqlItem = new MapperSqlItem();
-                    if(content instanceof DefaultText) {
-                        DefaultText defaultText = (DefaultText)content;
-                        sqlItem.setType("text");
-                        sqlItem.setSql(defaultText.getText().trim());
-                    } else if(content instanceof DefaultElement) {
-                        // 这里后期会有更加复杂的处理，暂时只考虑简单的 refId
-                        DefaultElement defaultElement = (DefaultElement)content;
-                        sqlItem.setType("include");
-                        sqlItem.setRefId(defaultElement.attributeValue("refid"));
-                    }
-
-                    sqlItemList.add(sqlItem);
+                if(StringUtil.isNotEmpty(resultType)) {
+                    // 出参可能不存在
+                    mapperMethod.setResultType(ClassUtil.getClass(config.getTypeAlias(resultType)));
                 }
 
+                mapperMethod.setResultMap(resultMap);
+
+                // 构建 sql 信息
+                List<MapperSqlItem> sqlItemList = buildSqlItems(element);
                 mapperMethod.setSqlItemList(sqlItemList);
                 // 这个是暂时的 sql
                 mapperMethod.setSql(element.getTextTrim());
@@ -165,10 +163,68 @@ public class MapperRegister {
         mapperClass.setNamespace(namespace);
         mapperClass.setMethodList(methodList);
         mapperClass.setSqlTemplateList(sqlTemplateList);
+        mapperClass.setResultMapMapping(resultMapMapping);
 
         // 替换模板
         replaceSqlTemplate(mapperClass);
         return mapperClass;
+    }
+
+
+    /**
+     * 构建对应的结果映射元素列表
+     * @param element 当前元素
+     * @return 结果列表
+     * @since 0.0.12
+     */
+    private List<MapperResultMapItem> buildResultMapItems(final Element element) {
+        List<?> itemDocs = element.elements(MapperTypeConst.RESULT);
+        List<MapperResultMapItem> mapItems = new ArrayList<>(itemDocs.size());
+
+        for(Object doc : itemDocs) {
+            DefaultElement elem = (DefaultElement) doc;
+
+            MapperResultMapItem mapItem = new MapperResultMapItem();
+            mapItem.setColumn(elem.attributeValue(MapperAttrConst.COLUMN));
+            mapItem.setProperty(elem.attributeValue(MapperAttrConst.PROPERTY));
+            mapItem.setJavaType(elem.attributeValue(MapperAttrConst.JAVA_TYPE));
+            mapItem.setJdbcType(elem.attributeValue(MapperAttrConst.JDBC_TYPE));
+            mapItem.setTypeHandler(elem.attributeValue(MapperAttrConst.TYPE_HANDLER));
+            mapItems.add(mapItem);
+        }
+
+        return mapItems;
+    }
+
+    /**
+     * 构建 sql 元素列表
+     * @param element 元素
+     * @return 结果
+     * @since 0.0.12
+     */
+    private List<MapperSqlItem> buildSqlItems(Element element) {
+        // 使用 content 替代简单的文本
+        List<?> contentList = element.content();
+        List<MapperSqlItem> sqlItemList = new ArrayList<>();
+        for(Object content : contentList) {
+            MapperSqlItem sqlItem = new MapperSqlItem();
+            if(content instanceof DefaultText) {
+                DefaultText defaultText = (DefaultText)content;
+                sqlItem.setType(MapperSqlType.TEXT);
+                sqlItem.setSql(defaultText.getText().trim());
+            } else if(content instanceof DefaultElement) {
+                // 这里后期会有更加复杂的处理，暂时只考虑简单的 refId
+                // TODO: 暂时只考虑 include，这里固定写死。
+                // 后期如果引入动态 SQL，则需要做更加细化的处理。
+                DefaultElement defaultElement = (DefaultElement)content;
+                sqlItem.setType(MapperSqlType.INCLUDE);
+                sqlItem.setRefId(defaultElement.attributeValue(MapperAttrConst.REF_ID));
+            }
+
+            sqlItemList.add(sqlItem);
+        }
+
+        return sqlItemList;
     }
 
     /**
@@ -198,9 +254,9 @@ public class MapperRegister {
 
             List<MapperSqlItem> sqlItems = mapperMethod.getSqlItemList();
             for(MapperSqlItem sqlItem : sqlItems) {
-                if("text".equals(sqlItem.getType())) {
+                if(MapperSqlType.TEXT.equals(sqlItem.getType())) {
                     sqlBuffer.append(sqlItem.getSql()).append(" ");
-                } else if("include".equals(sqlItem.getType())) {
+                } else if(MapperSqlType.INCLUDE.equals(sqlItem.getType())) {
                     String refSql = getRefIdSql(sqlTemplates, sqlItem.getRefId());
                     sqlBuffer.append(refSql).append(" ");
                 }

@@ -27,7 +27,7 @@
 <dependency>
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.11</version>
+    <version>0.0.12</version>
 </dependency>
 ```
 
@@ -107,11 +107,13 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 - [ ] 添加 ResultMap 基础映射
 
-- [ ] 添加 `#{}` 的对象属性解析
+- [ ] 添加 `#{}` 的入参对象属性解析
 
 1. 单个属性随便命名
 
 2. 多个属性反射获取
+
+- [ ] 对于 CRUD 的全面支持
 
 - [ ] 连接池管理
 

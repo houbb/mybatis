@@ -58,6 +58,21 @@ public class MapperMethod {
      */
     private Class<?> paramType;
 
+    /**
+     * 映射结果集合
+     * @since 0.0.12
+     */
+    private String resultMap;
+
+
+    /**
+     * 依赖的 class 信息
+     *
+     * TODO: 后期这里做一些优化，简化这种依赖关系
+     * @since 0.0.12
+     */
+    private MapperClass refClass;
+
     public String getType() {
         return type;
     }
@@ -114,17 +129,20 @@ public class MapperMethod {
         this.sqlItemList = sqlItemList;
     }
 
-    @Override
-    public String toString() {
-        return "MapperMethod{" +
-                "type='" + type + '\'' +
-                ", sql='" + sql + '\'' +
-                ", sqlItemList=" + sqlItemList +
-                ", methodName='" + methodName + '\'' +
-                ", method=" + method +
-                ", resultType=" + resultType +
-                ", paramType=" + paramType +
-                '}';
+    public String getResultMap() {
+        return resultMap;
+    }
+
+    public void setResultMap(String resultMap) {
+        this.resultMap = resultMap;
+    }
+
+    public MapperClass getRefClass() {
+        return refClass;
+    }
+
+    public void setRefClass(MapperClass refClass) {
+        this.refClass = refClass;
     }
 
 }

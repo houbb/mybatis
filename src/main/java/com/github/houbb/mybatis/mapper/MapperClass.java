@@ -1,6 +1,9 @@
 package com.github.houbb.mybatis.mapper;
 
+import com.github.houbb.mybatis.mapper.component.MapperResultMapItem;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author binbin.hou
@@ -26,6 +29,12 @@ public class MapperClass {
      */
     private List<MapperSqlTemplate> sqlTemplateList;
 
+    /**
+     * 结果集映射 map
+     * @since 0.0.12
+     */
+    private Map<String, List<MapperResultMapItem>> resultMapMapping;
+
     public String getNamespace() {
         return namespace;
     }
@@ -50,12 +59,21 @@ public class MapperClass {
         this.sqlTemplateList = sqlTemplateList;
     }
 
+    public Map<String, List<MapperResultMapItem>> getResultMapMapping() {
+        return resultMapMapping;
+    }
+
+    public void setResultMapMapping(Map<String, List<MapperResultMapItem>> resultMapMapping) {
+        this.resultMapMapping = resultMapMapping;
+    }
+
     @Override
     public String toString() {
         return "MapperClass{" +
                 "namespace='" + namespace + '\'' +
                 ", methodList=" + methodList +
                 ", sqlTemplateList=" + sqlTemplateList +
+                ", resultMapMapping=" + resultMapMapping +
                 '}';
     }
 

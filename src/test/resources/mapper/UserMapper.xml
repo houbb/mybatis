@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapper namespace="com.github.houbb.mybatis.mapper.UserMapper">
 
+    <resultMap id="aliasResultMap" >
+        <result property="name" column="username"/>
+        <result property="password" column="pwd"/>
+    </resultMap>
+
     <sql id="baseColumn">
         name, password
     </sql>
-
     <sql id="baseCondition">
         id = ?
     </sql>
@@ -22,6 +26,14 @@
         select name, password from user
     </select>
 
+    <select id = "selectMap" paramType="long"
+            resultType = "java.util.Map">
+        select name, password from user where id = ?
+    </select>
 
+    <select id = "selectByIdWithResultMap" paramType="long"
+            resultMap = "aliasResultMap">
+        select name username, password pwd from user where id = ?
+    </select>
 
 </mapper>

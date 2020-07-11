@@ -6,10 +6,12 @@ import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.heaven.util.lang.reflect.ReflectFieldUtil;
 import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.exception.MybatisException;
+import com.github.houbb.mybatis.handler.result.ResultHandlerContext;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -41,16 +43,20 @@ public class MapResultTypeHandler extends AbstractResultTypeHandler {
     }
 
     @Override
-    protected Object doBuildResult(Config config, ResultSet resultSet, Class<?> resultType) {
+    protected Object doBuildResult(ResultHandlerContext context) {
         try {
             Map<String, Object> resultMap = new HashMap<>();
+            // 基本信息
+            final ResultSet resultSet = context.resultSet();
+            final ResultSetMetaData metaData = resultSet.getMetaData();
 
             // 为空直接返回，大于1则报错
             // 列数的总数
-            int columnCount = resultSet.getMetaData().getColumnCount();
+            int columnCount = metaData.getColumnCount();
 
             for (int i = 1; i <= columnCount; i++) {
-                String columnName = resultSet.getMetaData().getColumnName(i);
+                String columnName = metaData.getColumnName(i);
+                //TODO: 这里如果给字段起别名，获取到的是原始的字段名称
                 Object value = resultSet.getObject(columnName);
 
                 resultMap.put(columnName, value);

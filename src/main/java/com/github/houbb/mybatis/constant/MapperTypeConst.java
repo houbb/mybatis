@@ -15,6 +15,12 @@ public final class MapperTypeConst {
     public static final String INCLUDE = "include";
 
     /**
+     * 结果
+     * @since 0.0.12
+     */
+    public static final String RESULT = "result";
+
+    /**
      * sql 模板
      * @since 0.0.11
      */

@@ -44,11 +44,8 @@ public class SimpleExecutor implements Executor {
             preparedStatement.execute();
 
             // 4. 处理结果
-            final Class<?> resultType = method.getResultType();
-            final Class<?> methodReturnType = method.getMethod().getReturnType();
             ResultSet resultSet = preparedStatement.getResultSet();
-
-            ResultHandler resultHandler = new ResultHandler(resultType, methodReturnType, config);
+            ResultHandler resultHandler = new ResultHandler(method, config);
             Object result = resultHandler.buildResult(resultSet);
             return (T) result;
         } catch (SQLException ex) {

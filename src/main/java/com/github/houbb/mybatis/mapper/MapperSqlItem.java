@@ -1,5 +1,7 @@
 package com.github.houbb.mybatis.mapper;
 
+import com.github.houbb.mybatis.constant.enums.MapperSqlType;
+
 /**
  * sql 元素片段
  * @since 0.0.11
@@ -10,7 +12,7 @@ public class MapperSqlItem {
      * 类别
      * @since 0.0.11
      */
-    private String type;
+    private MapperSqlType type;
 
     /**
      * 纯 sql
@@ -24,11 +26,11 @@ public class MapperSqlItem {
      */
     private String refId;
 
-    public String getType() {
+    public MapperSqlType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(MapperSqlType type) {
         this.type = type;
     }
 

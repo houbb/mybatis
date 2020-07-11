@@ -12,14 +12,10 @@ public interface ResultTypeHandler {
 
     /**
      * 构建结果
-     * @param config 配置信息
-     * @param resultSet 结果集
-     * @param resultType 结果类
+     * @param context 上下文
      * @return 结果
      * @since 0.0.10
      */
-    Object buildResult(final Config config,
-                       final ResultSet resultSet,
-                       final Class<?> resultType);
+    Object buildResult(ResultHandlerContext context);
     
 }
