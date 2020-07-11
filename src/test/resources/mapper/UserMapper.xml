@@ -36,4 +36,21 @@
         select name username, password pwd from user where id = ?
     </select>
 
+    <select id = "selectWithReplace" resultType="com.github.houbb.mybatis.domain.User">
+        select name, password from user
+        order by ${orderBy}
+    </select>
+
+    <select id = "selectByIdWithReplace" resultType="com.github.houbb.mybatis.domain.User">
+        select name, password from user
+        where id = #{id}
+        order by ${orderBy}
+    </select>
+
+    <select id = "selectByIdAndName" resultType="com.github.houbb.mybatis.domain.User">
+        select name, password from user
+        where id = #{id}
+        and name = #{name}
+    </select>
+
 </mapper>

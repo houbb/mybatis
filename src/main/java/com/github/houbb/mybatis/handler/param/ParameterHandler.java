@@ -1,12 +1,16 @@
 package com.github.houbb.mybatis.handler.param;
 
 import com.github.houbb.heaven.util.util.ArrayUtil;
+import com.github.houbb.heaven.util.util.CollectionUtil;
+import com.github.houbb.heaven.util.util.MapUtil;
 import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 反射设置属性值
@@ -50,15 +54,18 @@ public class ParameterHandler {
      * @since 0.0.1
      */
     @SuppressWarnings("all")
-    public void setParams(final Object[] objects) {
+    public void setParams(final List<String> psNames,
+                          final Map<String, Object> paramMap) {
         try {
             // 跳过处理
-            if(ArrayUtil.isEmpty(objects)) {
+            if(CollectionUtil.isEmpty(psNames)
+                || MapUtil.isEmpty(paramMap)) {
                 return;
             }
 
-            for(int i = 0; i < objects.length; i++) {
-                Object value = objects[i];
+            for(int i = 0; i < psNames.size(); i++) {
+                String fieldName = psNames.get(i);
+                Object value = paramMap.get(fieldName);
 
                 // 获取对应的处理类
                 Class valueType = value.getClass();

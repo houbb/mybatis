@@ -47,4 +47,30 @@ public class Main {
         System.out.println(userMapper.selectByIdWithResultMap(1L));
     }
 
+    /**
+     * @since 0.0.13
+     */
+    @Test
+    public void selectWithReplaceTest() {
+        System.out.println(userMapper.selectWithReplace("id asc"));
+    }
+
+    /**
+     * @since 0.0.13
+     */
+    @Test
+    public void selectByIdWithReplaceTest() {
+        System.out.println(userMapper.selectByIdWithReplace(1L, "id asc"));
+    }
+
+    /**
+     * @since 0.0.13
+     */
+    @Test
+    public void selectByIdAndNameTest() {
+        System.out.println(userMapper.selectByIdAndName(1L, "ryo"));
+        System.out.println(userMapper.selectByIdAndName(1L, "ryo2"));
+    }
+
+
 }
