@@ -1,5 +1,8 @@
 package com.github.houbb.mybatis.support.replace;
 
+import com.github.houbb.mybatis.mapper.MapperSqlItem;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,11 +14,10 @@ public interface ISqlReplace {
     /**
      *
      * 执行替换
-     * @param original 原始字符串
-     * @param paramMap 参数 map
+     * @param sqlReplaceResult 原始的替换信息
      * @return 替换后的字符串
+     * @since 0.0.13
      */
-    SqlReplaceResult replace(String original,
-                   Map<String, Object> paramMap);
+    SqlReplaceResult replace(SqlReplaceResult sqlReplaceResult);
 
 }

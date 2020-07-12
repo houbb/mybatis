@@ -21,6 +21,12 @@ public final class MapperAttrConst {
     public static final String REF_ID = "refid";
 
     /**
+     * if 对应的条件语句
+     * @since 0.0.16
+     */
+    public static final String TEST = "test";
+
+    /**
      * 参数类型
      * @since 0.0.12
      */

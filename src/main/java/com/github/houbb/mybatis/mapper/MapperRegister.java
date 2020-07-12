@@ -10,6 +10,9 @@ import com.github.houbb.mybatis.constant.MapperTypeConst;
 import com.github.houbb.mybatis.constant.enums.MapperSqlType;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.mapper.component.MapperResultMapItem;
+import com.github.houbb.mybatis.support.replace.ISqlReplace;
+import com.github.houbb.mybatis.support.replace.SqlReplaceResult;
+import com.github.houbb.mybatis.support.replace.impl.IncludeRefSqlReplace;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultElement;
@@ -189,7 +192,6 @@ public class MapperRegister {
         return mapperClass;
     }
 
-
     /**
      * 构建对应的结果映射元素列表
      * @param element 当前元素
@@ -229,15 +231,23 @@ public class MapperRegister {
             MapperSqlItem sqlItem = new MapperSqlItem();
             if(content instanceof DefaultText) {
                 DefaultText defaultText = (DefaultText)content;
+                // 纯文本是可以直接拼接的
+                sqlItem.setReadyForSql(true);
                 sqlItem.setType(MapperSqlType.TEXT);
                 sqlItem.setSql(defaultText.getText().trim());
             } else if(content instanceof DefaultElement) {
-                // 这里后期会有更加复杂的处理，暂时只考虑简单的 refId
-                // TODO: 暂时只考虑 include，这里固定写死。
-                // 后期如果引入动态 SQL，则需要做更加细化的处理。
                 DefaultElement defaultElement = (DefaultElement)content;
-                sqlItem.setType(MapperSqlType.INCLUDE);
-                sqlItem.setRefId(defaultElement.attributeValue(MapperAttrConst.REF_ID));
+                String type = defaultElement.getName();
+                if(MapperTypeConst.INCLUDE.equals(type)) {
+                    // 这里后期会有更加复杂的处理，暂时只考虑简单的 refId
+                    // 后期如果引入动态 SQL，则需要做更加细化的处理。
+                    sqlItem.setType(MapperSqlType.INCLUDE);
+                    sqlItem.setRefId(defaultElement.attributeValue(MapperAttrConst.REF_ID));
+                }
+                if(MapperTypeConst.IF.equals(type)) {
+                    sqlItem.setType(MapperSqlType.IF);
+                    sqlItem.setTestCondition(defaultElement.attributeValue(MapperAttrConst.TEST));
+                }
             }
 
             sqlItemList.add(sqlItem);
@@ -269,42 +279,16 @@ public class MapperRegister {
         }
 
         for(MapperMethod mapperMethod : methods) {
-            StringBuilder sqlBuffer = new StringBuilder();
+            ISqlReplace sqlReplace = new IncludeRefSqlReplace();
 
-            List<MapperSqlItem> sqlItems = mapperMethod.getSqlItemList();
-            for(MapperSqlItem sqlItem : sqlItems) {
-                if(MapperSqlType.TEXT.equals(sqlItem.getType())) {
-                    sqlBuffer.append(sqlItem.getSql()).append(" ");
-                } else if(MapperSqlType.INCLUDE.equals(sqlItem.getType())) {
-                    String refSql = getRefIdSql(sqlTemplates, sqlItem.getRefId());
-                    sqlBuffer.append(refSql).append(" ");
-                }
-            }
+            // 入参
+            SqlReplaceResult in = SqlReplaceResult.newInstance()
+                    .mapperMethod(mapperMethod);
 
-            String newSql = sqlBuffer.toString();
-            mapperMethod.setSql(newSql);
+            // 出参
+            // sql item 列表在方法中被重新设置
+            sqlReplace.replace(in);
         }
-    }
-
-    /**
-     * 获取引用的 sql
-     * @param sqlTemplates sql 模板列表
-     * @param refId 引用的 id 标识
-     * @return 结果
-     * @since 0.0.11
-     */
-    private String getRefIdSql(final List<MapperSqlTemplate> sqlTemplates,
-                               final String refId) {
-        ArgUtil.notEmpty(refId, "refId");
-
-        for(MapperSqlTemplate sqlTemplate : sqlTemplates) {
-            String id = sqlTemplate.getId();
-            if(refId.equals(id)) {
-                return sqlTemplate.getSql();
-            }
-        }
-
-        throw new MybatisException("Not found sql template for refId: " + refId);
     }
 
     /**

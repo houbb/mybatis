@@ -5,7 +5,7 @@
 
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.15</version>
+    <version>0.0.16-SNAPSHOT</version>
 
     <properties>
         <!--============================== All Plugins START ==============================-->
@@ -85,7 +85,7 @@
 
     <!--============================== ADD For sonatype START ==============================-->
     <name>mybatis</name>
-    <description>mybatis tool for java.</description>
+    <description>The simple mybatis for java.</description>
 
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -203,6 +203,5 @@
             </distributionManagement>
         </profile>
     </profiles>
-
 
 </project>

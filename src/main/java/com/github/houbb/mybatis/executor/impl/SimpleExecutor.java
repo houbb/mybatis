@@ -9,9 +9,10 @@ import com.github.houbb.mybatis.executor.Executor;
 import com.github.houbb.mybatis.handler.param.ParameterHandler;
 import com.github.houbb.mybatis.handler.result.ResultHandler;
 import com.github.houbb.mybatis.mapper.MapperMethod;
+import com.github.houbb.mybatis.mapper.MapperSqlItem;
 import com.github.houbb.mybatis.support.replace.ISqlReplace;
 import com.github.houbb.mybatis.support.replace.SqlReplaceResult;
-import com.github.houbb.mybatis.support.replace.impl.SimpleSqlReplace;
+import com.github.houbb.mybatis.support.replace.impl.PlaceholderSqlReplace;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -52,17 +53,15 @@ public class SimpleExecutor implements Executor {
                        MapperMethod method,
                        Object[] args) {
         //1. 基本信息
-        String sql = method.getSql();
+        final Map<String, Object> paramMap = buildParamNameValue(method, args);
 
-        //1.1 直接动态替换掉 ${}
-        ISqlReplace sqlReplace = new SimpleSqlReplace();
-        Map<String, Object> paramMap = buildParamNameValue(method, args);
-        SqlReplaceResult replaceResult = sqlReplace.replace(sql, paramMap);
-
-        //1.2 构建好入参名称和 ? 位置关系，使用 ps 安全替换
-        sql = replaceResult.sql();
-        System.out.println("【sql】" + sql);
+        //2. 进行参数的替换
+        SqlReplaceResult replaceResult = doReplace(method, paramMap);
+        //2.1
         List<String> psNames = replaceResult.psNames();
+        //2.2 sql
+        String sql = buildPsSql(replaceResult.mapperMethod().getSqlItemList());
+        System.out.println("【sql】" + sql);
 
         try(Connection connection = config.getDataSource().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
@@ -88,17 +87,15 @@ public class SimpleExecutor implements Executor {
     @Override
     public int update(Config config, MapperMethod method, Object[] args) {
         //1. 基本信息
-        String sql = method.getSql();
+        final Map<String, Object> paramMap = buildParamNameValue(method, args);
 
-        //1.1 直接动态替换掉 ${}
-        ISqlReplace sqlReplace = new SimpleSqlReplace();
-        Map<String, Object> paramMap = buildParamNameValue(method, args);
-        SqlReplaceResult replaceResult = sqlReplace.replace(sql, paramMap);
-
-        //1.2 构建好入参名称和 ? 位置关系，使用 ps 安全替换
-        sql = replaceResult.sql();
-        System.out.println("【sql】" + sql);
+        //2. 进行参数的替换
+        SqlReplaceResult replaceResult = doReplace(method, paramMap);
+        //2.1
         List<String> psNames = replaceResult.psNames();
+        //2.2 sql
+        String sql = buildPsSql(replaceResult.mapperMethod().getSqlItemList());
+        System.out.println("【sql】" + sql);
 
         try(Connection connection = config.getDataSource().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
@@ -169,5 +166,39 @@ public class SimpleExecutor implements Executor {
         return StringUtil.EMPTY;
     }
 
+    /**
+     * 构建 ps SQL
+     * @param sqlItems 对应的 sql 信息
+     * @return 结果
+     * @since 0.0.16
+     */
+    private String buildPsSql(final List<MapperSqlItem> sqlItems) {
+        StringBuilder sqlBuffer = new StringBuilder();
+
+        for(MapperSqlItem mapperSqlItem : sqlItems) {
+            if(mapperSqlItem.isReadyForSql()) {
+                String sqlTrim = mapperSqlItem.getSql().trim();
+                sqlBuffer.append(sqlTrim).append(StringUtil.BLANK);
+            }
+        }
+        return sqlBuffer.toString().trim();
+    }
+
+    /**
+     * 执行替换
+     * @param method 方法信息
+     * @param paramMap 参数信息
+     * @return 替换结果
+     * @since 0.0.16
+     */
+    private SqlReplaceResult doReplace(final MapperMethod method,
+                                       final Map<String, Object> paramMap) {
+        SqlReplaceResult replaceResult = SqlReplaceResult.newInstance()
+                .mapperMethod(method)
+                .paramMap(paramMap);
+
+        ISqlReplace sqlReplace = new PlaceholderSqlReplace();
+        return sqlReplace.replace(replaceResult);
+    }
 
 }

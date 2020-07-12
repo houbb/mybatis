@@ -18,5 +18,11 @@ public enum MapperSqlType {
      */
     INCLUDE,
 
+    /**
+     * 是否满足条件
+     * @since 0.0.16
+     */
+    IF,
+
     ;
 }

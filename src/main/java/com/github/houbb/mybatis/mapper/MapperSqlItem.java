@@ -26,6 +26,22 @@ public class MapperSqlItem {
      */
     private String refId;
 
+    /**
+     * 测试的条件
+     * @since 0.0.16
+     */
+    private String testCondition;
+
+    /**
+     * 已经处理好，可以直接进行 sql 的拼接
+     *
+     * 1. 保证原始的信息不变。
+     * 2. 便于后期的优化拓展
+     *
+     * @since 0.0.16
+     */
+    private boolean readyForSql;
+
     public MapperSqlType getType() {
         return type;
     }
@@ -50,12 +66,30 @@ public class MapperSqlItem {
         this.refId = refId;
     }
 
+    public String getTestCondition() {
+        return testCondition;
+    }
+
+    public void setTestCondition(String testCondition) {
+        this.testCondition = testCondition;
+    }
+
+    public boolean isReadyForSql() {
+        return readyForSql;
+    }
+
+    public void setReadyForSql(boolean readyForSql) {
+        this.readyForSql = readyForSql;
+    }
+
     @Override
     public String toString() {
         return "MapperSqlItem{" +
-                "type='" + type + '\'' +
+                "type=" + type +
                 ", sql='" + sql + '\'' +
                 ", refId='" + refId + '\'' +
+                ", testCondition='" + testCondition + '\'' +
+                ", readyForSql=" + readyForSql +
                 '}';
     }
 

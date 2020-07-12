@@ -36,6 +36,7 @@ public class UpdateTest {
     @Test
     public void insertUserTest() {
         User user = new User();
+        user.setId(2L);
         user.setName("tom");
         user.setPassword("654312");
         Date date = new Date();
@@ -48,7 +49,7 @@ public class UpdateTest {
      */
     @Test
     public void updateUserPasswordTest() {
-        System.out.println(userMapper.updateUserPassword(1L, "789456"));
+        System.out.println(userMapper.updateUserPassword(2L, "789456"));
     }
 
     /**
@@ -56,7 +57,7 @@ public class UpdateTest {
      */
     @Test
     public void deleteUserByIdTest() {
-        System.out.println(userMapper.deleteUserById(1L));
+        System.out.println(userMapper.deleteUserById(2L));
     }
 
 }

@@ -15,6 +15,12 @@ public final class MapperTypeConst {
     public static final String INCLUDE = "include";
 
     /**
+     * 是否满足条件
+     * @since 0.0.16
+     */
+    public static final String IF = "if";
+
+    /**
      * 结果
      * @since 0.0.12
      */
