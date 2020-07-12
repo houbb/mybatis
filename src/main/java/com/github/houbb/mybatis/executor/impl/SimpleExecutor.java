@@ -1,5 +1,6 @@
 package com.github.houbb.mybatis.executor.impl;
 
+import com.github.houbb.heaven.support.pipeline.Pipeline;
 import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.util.ArrayUtil;
 import com.github.houbb.mybatis.annotation.Param;
@@ -12,7 +13,9 @@ import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.mapper.MapperSqlItem;
 import com.github.houbb.mybatis.support.replace.ISqlReplace;
 import com.github.houbb.mybatis.support.replace.SqlReplaceResult;
+import com.github.houbb.mybatis.support.replace.impl.IfSqlReplace;
 import com.github.houbb.mybatis.support.replace.impl.PlaceholderSqlReplace;
+import com.github.houbb.mybatis.support.replace.impl.SqlReplaceChains;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -20,6 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +64,7 @@ public class SimpleExecutor implements Executor {
         //2.1
         List<String> psNames = replaceResult.psNames();
         //2.2 sql
-        String sql = buildPsSql(replaceResult.mapperMethod().getSqlItemList());
+        String sql = buildPsSql(replaceResult.dynamicSqlItems());
         System.out.println("【sql】" + sql);
 
         try(Connection connection = config.getDataSource().getConnection();
@@ -94,7 +98,7 @@ public class SimpleExecutor implements Executor {
         //2.1
         List<String> psNames = replaceResult.psNames();
         //2.2 sql
-        String sql = buildPsSql(replaceResult.mapperMethod().getSqlItemList());
+        String sql = buildPsSql(replaceResult.dynamicSqlItems());
         System.out.println("【sql】" + sql);
 
         try(Connection connection = config.getDataSource().getConnection();
@@ -186,19 +190,65 @@ public class SimpleExecutor implements Executor {
 
     /**
      * 执行替换
-     * @param method 方法信息
+     *
+     * TODO: 动态替换会导致不同的条件值不对的问题。
+     * 避免对原来的 mapper 产生影响。
+     *
+     * 1. 这里还存在一个问题，如果 test 中包含 include 依赖的话，那么顺序应该再次调整下。
+     *
+     * include 这个可以先替换掉。
+     *
+     * test
+     * placeholder
+     *
+     * @param mapperMethod 方法信息
      * @param paramMap 参数信息
      * @return 替换结果
      * @since 0.0.16
      */
-    private SqlReplaceResult doReplace(final MapperMethod method,
+    private SqlReplaceResult doReplace(final MapperMethod mapperMethod,
                                        final Map<String, Object> paramMap) {
-        SqlReplaceResult replaceResult = SqlReplaceResult.newInstance()
-                .mapperMethod(method)
-                .paramMap(paramMap);
 
-        ISqlReplace sqlReplace = new PlaceholderSqlReplace();
-        return sqlReplace.replace(replaceResult);
+        List<MapperSqlItem> dynamicSqlItems = deepCopySqlItems(mapperMethod);
+        SqlReplaceResult replaceResult = SqlReplaceResult.newInstance()
+                .mapperMethod(mapperMethod)
+                .paramMap(paramMap)
+                .dynamicSqlItems(dynamicSqlItems);
+
+        ISqlReplace replace = new SqlReplaceChains() {
+            @Override
+            protected void init(Pipeline<ISqlReplace> pipeline) {
+                //1. 首先处理 if 判断
+                pipeline.addLast(new IfSqlReplace());
+                //2. 然后处理 占位符
+                pipeline.addLast(new PlaceholderSqlReplace());
+            }
+        };
+
+        return replace.replace(replaceResult);
+    }
+
+    /**
+     * 深度拷贝
+     *
+     * @param mapperMethod 方法
+     * @return 结果
+     * @since 0.0.16
+     */
+    private List<MapperSqlItem> deepCopySqlItems(final MapperMethod mapperMethod) {
+        List<MapperSqlItem> originalSqlItems = mapperMethod.getSqlItemList();
+        List<MapperSqlItem> dynamicSqlItems = new ArrayList<>(originalSqlItems.size());
+        for(MapperSqlItem old : originalSqlItems) {
+            MapperSqlItem dynamic = new MapperSqlItem();
+            dynamic.setType(old.getType());
+            dynamic.setSql(old.getSql());
+            dynamic.setReadyForSql(old.isReadyForSql());
+            dynamic.setTestCondition(old.getTestCondition());
+            dynamic.setRefId(old.getRefId());
+            dynamicSqlItems.add(dynamic);
+        }
+
+        return dynamicSqlItems;
     }
 
 }

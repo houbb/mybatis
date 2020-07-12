@@ -1,6 +1,7 @@
 package com.github.houbb.mybatis.support.replace;
 
 import com.github.houbb.mybatis.mapper.MapperMethod;
+import com.github.houbb.mybatis.mapper.MapperSqlItem;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,14 @@ public class SqlReplaceResult {
      * @since 0.0.16
      */
     private Map<String, Object> paramMap;
+
+    /**
+     * sql 元素列表
+     *
+     * 1. 针对动态 sql
+     * @since 0.0.16
+     */
+    private List<MapperSqlItem> dynamicSqlItems;
 
     /**
      * 新建对象实例
@@ -62,6 +71,15 @@ public class SqlReplaceResult {
 
     public SqlReplaceResult mapperMethod(MapperMethod mapperMethod) {
         this.mapperMethod = mapperMethod;
+        return this;
+    }
+
+    public List<MapperSqlItem> dynamicSqlItems() {
+        return dynamicSqlItems;
+    }
+
+    public SqlReplaceResult dynamicSqlItems(List<MapperSqlItem> dynamicSqlItems) {
+        this.dynamicSqlItems = dynamicSqlItems;
         return this;
     }
 }

@@ -5,7 +5,7 @@
 
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.16-SNAPSHOT</version>
+    <version>0.0.16</version>
 
     <properties>
         <!--============================== All Plugins START ==============================-->
@@ -33,6 +33,7 @@
         <junit.version>4.12</junit.version>
         <mysql.version>5.1.29</mysql.version>
         <dom4j.version>1.6.1</dom4j.version>
+        <commons-jexl3.version>3.1</commons-jexl3.version>
     </properties>
 
 
@@ -64,6 +65,11 @@
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
             <version>${dom4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl3</artifactId>
+            <version>${commons-jexl3.version}</version>
         </dependency>
     </dependencies>
 

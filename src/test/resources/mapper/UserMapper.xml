@@ -10,7 +10,7 @@
         name, password
     </sql>
     <sql id="baseCondition">
-        id = ?
+        id = #{id}
     </sql>
 
     <select id = "selectByIdWithTemplate" paramType="long"
@@ -19,7 +19,7 @@
     </select>
 
     <select id = "selectById" paramType="long" resultType = "com.github.houbb.mybatis.domain.User">
-        select name, password from user where id = ?
+        select name, password from user where id = #{id}
     </select>
 
     <select id="selectList" resultType="com.github.houbb.mybatis.domain.User">
@@ -28,12 +28,12 @@
 
     <select id = "selectMap" paramType="long"
             resultType = "java.util.Map">
-        select name, password from user where id = ?
+        select name, password from user where id = #{id}
     </select>
 
     <select id = "selectByIdWithResultMap" paramType="long"
             resultMap = "aliasResultMap">
-        select name username, password pwd from user where id = ?
+        select name username, password pwd from user where id = #{id}
     </select>
 
     <select id = "selectWithReplace" resultType="com.github.houbb.mybatis.domain.User">
@@ -88,5 +88,17 @@
         delete from user
         where id = #{id}
     </delete>
+
+    <select id = "selectByIdCondition">
+        select name, password, create_time
+        from user
+        where 1 = 1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="orderBy != null">
+            order by ${orderBy}
+        </if>
+    </select>
 
 </mapper>

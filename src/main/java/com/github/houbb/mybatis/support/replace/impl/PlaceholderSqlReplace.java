@@ -26,7 +26,7 @@ public class PlaceholderSqlReplace implements ISqlReplace {
 
         // 基本属性
         Map<String, Object> paramMap = sqlReplaceResult.paramMap();
-        List<MapperSqlItem> sqlItemList = sqlReplaceResult.mapperMethod().getSqlItemList();
+        List<MapperSqlItem> sqlItemList = sqlReplaceResult.dynamicSqlItems();
 
         if(MapUtil.isEmpty(paramMap)) {
             return sqlReplaceResult;
@@ -128,6 +128,7 @@ public class PlaceholderSqlReplace implements ISqlReplace {
         if(CollectionUtil.isEmpty(psNames)) {
             psNames = buildPsNames(replaceKeys, paramMap);
         }
+
         sqlReplaceResult.psNames(psNames);
 
         return sqlReplaceResult;
@@ -135,6 +136,10 @@ public class PlaceholderSqlReplace implements ISqlReplace {
 
     /**
      * 构建对应的 psNames
+     *
+     * 1. 不再添加对于 ? 的支持
+     *
+     * 这个会和 test 条件时冲突。
      * @param replaceParams 替换的参数列表
      * @param paramMap 参数集合
      * @return 结果
@@ -142,14 +147,13 @@ public class PlaceholderSqlReplace implements ISqlReplace {
      */
     private List<String> buildPsNames(final List<String> replaceParams,
                                       Map<String, Object> paramMap) {
-
         List<String> results = new ArrayList<>();
 
-        for(String key : paramMap.keySet()) {
-            if(!replaceParams.contains(key)) {
-                results.add(key);
-            }
-        }
+//        for(String key : paramMap.keySet()) {
+//            if(!replaceParams.contains(key)) {
+//                results.add(key);
+//            }
+//        }
         return results;
     }
 

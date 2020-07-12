@@ -111,5 +111,14 @@ public interface UserMapper {
      * @since 0.0.15
      */
     int deleteUserById(@Param("id") long id);
-    
+
+    /**
+     * 查询 map
+     * @param id  ID 标识
+     * @param orderBy 字段
+     * @return 结果
+     * @since 0.0.13
+     */
+    User selectByIdCondition(@Param("id") Long id, @Param("orderBy") String orderBy);
+
 }

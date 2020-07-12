@@ -246,6 +246,7 @@ public class MapperRegister {
                 }
                 if(MapperTypeConst.IF.equals(type)) {
                     sqlItem.setType(MapperSqlType.IF);
+                    sqlItem.setSql(defaultElement.getText().trim());
                     sqlItem.setTestCondition(defaultElement.attributeValue(MapperAttrConst.TEST));
                 }
             }
