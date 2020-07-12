@@ -27,7 +27,7 @@
 <dependency>
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.15</version>
+    <version>0.0.16</version>
 </dependency>
 ```
 
@@ -107,7 +107,7 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 - [ ] 对于 dynamic sql 的支持
 
-（1）if 的支持
+~~（1）if 的支持~~
 
 （2）foreach 的支持
 
