@@ -27,7 +27,7 @@
 <dependency>
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.14</version>
+    <version>0.0.15</version>
 </dependency>
 ```
 
@@ -50,7 +50,7 @@ create table user
 ) CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 -- init
-insert into user (name, password) value ('luna', '123456');
+insert into user (name, password, create_time) value ('luna', '123456', '20200701220301000');
 ```
 
 - 配置文件
@@ -105,9 +105,11 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 # 后期 road-map
 
-- [ ] 对于 CRUD 的全面支持
-
 - [ ] 对于 dynamic sql 的支持
+
+（1）if 的支持
+
+（2）foreach 的支持
 
 - [ ] 连接池管理
 

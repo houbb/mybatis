@@ -86,4 +86,30 @@ public interface UserMapper {
      */
     User selectByExampleOrderBy(@Param("ex") UserExample example, @Param("orderBy") String orderBy);
 
+    /**
+     * 插入用户信息
+     * @param user 用户
+     * @return 结果
+     * @since 0.0.15
+     */
+    int insertUser(User user);
+
+    /**
+     * 插入用户信息
+     * @param id 用户标识
+     * @param newPassword 新密码
+     * @return 结果
+     * @since 0.0.15
+     */
+    int updateUserPassword(@Param("id") long id,
+                           @Param("newPassword") String newPassword);
+
+    /**
+     * 根据 id 移除对象
+     * @param id id
+     * @return 结果
+     * @since 0.0.15
+     */
+    int deleteUserById(@Param("id") long id);
+    
 }

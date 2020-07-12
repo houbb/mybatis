@@ -16,7 +16,7 @@ import java.util.List;
  * @author binbin.hou
  * @since 1.0.0
  */
-public class Main {
+public class SelectTest {
 
     private UserMapper userMapper;
 

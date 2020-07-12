@@ -19,13 +19,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 这里可以设置为是否使用插件模式。
+ *
+ * query 查询
+ * create 插入
+ * edit 更新
+ * remove 删除
  *
  * @author binbin.hou
  * @since 0.0.1
@@ -45,7 +49,8 @@ public class SimpleExecutor implements Executor {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T query(final Config config,
-                       MapperMethod method, Object[] args) {
+                       MapperMethod method,
+                       Object[] args) {
         //1. 基本信息
         String sql = method.getSql();
 
@@ -75,6 +80,36 @@ public class SimpleExecutor implements Executor {
             ResultHandler resultHandler = new ResultHandler(method, config);
             Object result = resultHandler.buildResult(resultSet);
             return (T) result;
+        } catch (SQLException ex) {
+            throw new MybatisException(ex);
+        }
+    }
+
+    @Override
+    public int update(Config config, MapperMethod method, Object[] args) {
+        //1. 基本信息
+        String sql = method.getSql();
+
+        //1.1 直接动态替换掉 ${}
+        ISqlReplace sqlReplace = new SimpleSqlReplace();
+        Map<String, Object> paramMap = buildParamNameValue(method, args);
+        SqlReplaceResult replaceResult = sqlReplace.replace(sql, paramMap);
+
+        //1.2 构建好入参名称和 ? 位置关系，使用 ps 安全替换
+        sql = replaceResult.sql();
+        System.out.println("【sql】" + sql);
+        List<String> psNames = replaceResult.psNames();
+
+        try(Connection connection = config.getDataSource().getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
+            // 2. 处理参数
+            ParameterHandler parameterHandler = new ParameterHandler(preparedStatement, config);
+
+            //2.2 对 args 进行一次加工，只保留和顺序一致的，必须的信息。
+            parameterHandler.setParams(psNames, paramMap);
+
+            // 3. 执行方法
+            return preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             throw new MybatisException(ex);
         }

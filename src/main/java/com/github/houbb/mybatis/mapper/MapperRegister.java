@@ -53,7 +53,7 @@ public class MapperRegister {
     public MapperRegister addMapper(final String mapperPath) {
         MapperClass mapperClass = buildMapperData(mapperPath);
         String namespace = mapperClass.getNamespace();
-        Class clazz = ClassUtil.getClass(namespace);
+        Class<?> clazz = ClassUtil.getClass(namespace);
 
         this.addMapper(clazz, mapperClass);
         return this;
@@ -131,7 +131,7 @@ public class MapperRegister {
             } else if(MapperTypeConst.RESULT_MAP.equals(type)) {
                 List<MapperResultMapItem> mapItems = buildResultMapItems(element);
                 resultMapMapping.put(id, mapItems);
-            } else {
+            } else if(MapperTypeConst.SELECT.equals(type)) {
                 mapperMethod.setMethodName(id);
                 Method method = methodMap.get(id);
                 mapperMethod.setMethod(method);
@@ -149,6 +149,25 @@ public class MapperRegister {
                 }
 
                 mapperMethod.setResultMap(resultMap);
+
+                // 构建 sql 信息
+                List<MapperSqlItem> sqlItemList = buildSqlItems(element);
+                mapperMethod.setSqlItemList(sqlItemList);
+                // 这个是暂时的 sql
+                mapperMethod.setSql(element.getTextTrim());
+
+                methodList.add(mapperMethod);
+            } else if(MapperTypeConst.UPDATE.equals(type)
+                || MapperTypeConst.DELETE.equals(type)
+                || MapperTypeConst.INSERT.equals(type)) {
+                mapperMethod.setMethodName(id);
+                Method method = methodMap.get(id);
+                mapperMethod.setMethod(method);
+
+                String paramType = element.attributeValue(MapperAttrConst.PARAM_TYPE);
+                if(StringUtil.isNotEmpty(paramType)) {
+                    mapperMethod.setParamType(ClassUtil.getClass(config.getTypeAlias(paramType)));
+                }
 
                 // 构建 sql 信息
                 List<MapperSqlItem> sqlItemList = buildSqlItems(element);
@@ -297,7 +316,7 @@ public class MapperRegister {
      * @since 0.0.10
      */
     private Map<String, Method> buildMethodMap(final String namespace) {
-        Class clazz = ClassUtil.getClass(namespace);
+        Class<?> clazz = ClassUtil.getClass(namespace);
         Method[] methods = clazz.getMethods();
         Map<String, Method> resultMap = new HashMap<>(methods.length);
 

@@ -69,4 +69,24 @@
         order by ${orderBy}
     </select>
 
+    <insert id = "insertUser" paramType="com.github.houbb.mybatis.domain.User">
+        insert into user
+        (name, password, create_time)
+        value
+        (
+        #{name}, #{password}, #{createTime}
+        )
+    </insert>
+
+    <update id = "updateUserPassword">
+        update user
+        set password = #{newPassword}
+        where id = #{id}
+    </update>
+
+    <delete id = "deleteUserById">
+        delete from user
+        where id = #{id}
+    </delete>
+
 </mapper>
