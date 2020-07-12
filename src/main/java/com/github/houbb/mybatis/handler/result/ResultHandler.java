@@ -96,6 +96,8 @@ public class ResultHandler {
             // 结果大小的判断
             // 为空直接返回，大于1则报错
             if(resultSet.next()) {
+                //TODO: 查询列表，但是只有一个值的问题修复
+
                 // 分成为两种情况
                 // 1. 根据 resultType 反射获取字段
                 // 2. 根据 resultMap 获取反射字段信息

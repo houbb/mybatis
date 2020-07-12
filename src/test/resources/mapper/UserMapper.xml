@@ -101,4 +101,17 @@
         </if>
     </select>
 
+    <select id = "selectByIdSet">
+        select name, password, create_time
+        from user
+        where 1 = 1
+        and id in
+        <foreach collection="set" item="item">
+            #{item}
+        </foreach>
+
+    </select>
+
+
+
 </mapper>

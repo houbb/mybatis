@@ -14,10 +14,10 @@ import java.util.Date;
 
 /**
  * @author binbin.hou
- * @since 0.0.15
+ * @since 0.0.16
  */
 @Ignore
-public class DynamicSqlTest {
+public class DynamicSqlIfTest {
 
     private UserMapper userMapper;
 

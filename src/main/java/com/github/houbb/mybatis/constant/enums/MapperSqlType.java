@@ -24,5 +24,11 @@ public enum MapperSqlType {
      */
     IF,
 
+    /**
+     * 循环遍历
+     * @since 0.0.17
+     */
+    FOREACH,
+
     ;
 }

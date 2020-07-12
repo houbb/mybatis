@@ -5,14 +5,18 @@ import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.util.ArrayUtil;
 import com.github.houbb.mybatis.annotation.Param;
 import com.github.houbb.mybatis.config.Config;
+import com.github.houbb.mybatis.constant.MapperTypeConst;
+import com.github.houbb.mybatis.constant.enums.MapperSqlType;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.executor.Executor;
 import com.github.houbb.mybatis.handler.param.ParameterHandler;
 import com.github.houbb.mybatis.handler.result.ResultHandler;
 import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.mapper.MapperSqlItem;
+import com.github.houbb.mybatis.mapper.component.MapperForeachProperty;
 import com.github.houbb.mybatis.support.replace.ISqlReplace;
 import com.github.houbb.mybatis.support.replace.SqlReplaceResult;
+import com.github.houbb.mybatis.support.replace.impl.ForeachSqlReplace;
 import com.github.houbb.mybatis.support.replace.impl.IfSqlReplace;
 import com.github.houbb.mybatis.support.replace.impl.PlaceholderSqlReplace;
 import com.github.houbb.mybatis.support.replace.impl.SqlReplaceChains;
@@ -220,7 +224,9 @@ public class SimpleExecutor implements Executor {
             protected void init(Pipeline<ISqlReplace> pipeline) {
                 //1. 首先处理 if 判断
                 pipeline.addLast(new IfSqlReplace());
-                //2. 然后处理 占位符
+                //2. 处理 foreach
+                pipeline.addLast(new ForeachSqlReplace());
+                //3. 然后处理 占位符
                 pipeline.addLast(new PlaceholderSqlReplace());
             }
         };
@@ -245,6 +251,21 @@ public class SimpleExecutor implements Executor {
             dynamic.setReadyForSql(old.isReadyForSql());
             dynamic.setTestCondition(old.getTestCondition());
             dynamic.setRefId(old.getRefId());
+
+            // property
+            if(MapperSqlType.FOREACH.equals(old.getType())) {
+                MapperForeachProperty oldP = old.getForeachProperty();
+                MapperForeachProperty property = MapperForeachProperty.newInstance()
+                        .separator(oldP.separator())
+                        .collection(oldP.collection())
+                        .open(oldP.open())
+                        .close(oldP.close())
+                        .item(oldP.item())
+                        .index(oldP.index());
+
+                dynamic.setForeachProperty(property);
+            }
+
             dynamicSqlItems.add(dynamic);
         }
 

@@ -6,6 +6,7 @@ import com.github.houbb.mybatis.domain.UserExample;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author binbin.hou
@@ -120,5 +121,13 @@ public interface UserMapper {
      * @since 0.0.13
      */
     User selectByIdCondition(@Param("id") Long id, @Param("orderBy") String orderBy);
+
+    /**
+     * 查询 id 集合
+     * @param idSet  ID 标集合识
+     * @return 结果
+     * @since 0.0.13
+     */
+    List<User> selectByIdSet(@Param("set") Set<Long> idSet);
 
 }

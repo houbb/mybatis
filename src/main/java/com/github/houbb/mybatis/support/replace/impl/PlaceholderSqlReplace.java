@@ -22,7 +22,6 @@ public class PlaceholderSqlReplace implements ISqlReplace {
     @Override
     public SqlReplaceResult replace(SqlReplaceResult sqlReplaceResult) {
         List<String> psNames = new ArrayList<>();
-        List<String> replaceKeys = new ArrayList<>();
 
         // 基本属性
         Map<String, Object> paramMap = sqlReplaceResult.paramMap();
@@ -87,7 +86,6 @@ public class PlaceholderSqlReplace implements ISqlReplace {
                             // 直接连接对应的字符串
                             // 后期需要添加其他的转换形式
                             String replaceKey = replaceBuffer.toString();
-                            replaceKeys.add(replaceKey);
                             String replaceValue = paramMap.get(replaceKey).toString();
                             sqlBuffer.append(replaceValue);
 
@@ -123,38 +121,9 @@ public class PlaceholderSqlReplace implements ISqlReplace {
             }
         }
 
-        // 如果参数列表为空，比如原来直接使用了 ? 的场景
-        // 那么将 replace 的 key 移除即可。
-        if(CollectionUtil.isEmpty(psNames)) {
-            psNames = buildPsNames(replaceKeys, paramMap);
-        }
-
         sqlReplaceResult.psNames(psNames);
 
         return sqlReplaceResult;
-    }
-
-    /**
-     * 构建对应的 psNames
-     *
-     * 1. 不再添加对于 ? 的支持
-     *
-     * 这个会和 test 条件时冲突。
-     * @param replaceParams 替换的参数列表
-     * @param paramMap 参数集合
-     * @return 结果
-     * @since 0.0.13
-     */
-    private List<String> buildPsNames(final List<String> replaceParams,
-                                      Map<String, Object> paramMap) {
-        List<String> results = new ArrayList<>();
-
-//        for(String key : paramMap.keySet()) {
-//            if(!replaceParams.contains(key)) {
-//                results.add(key);
-//            }
-//        }
-        return results;
     }
 
 }

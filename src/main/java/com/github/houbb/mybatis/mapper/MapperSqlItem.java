@@ -1,6 +1,7 @@
 package com.github.houbb.mybatis.mapper;
 
 import com.github.houbb.mybatis.constant.enums.MapperSqlType;
+import com.github.houbb.mybatis.mapper.component.MapperForeachProperty;
 
 /**
  * sql 元素片段
@@ -42,6 +43,12 @@ public class MapperSqlItem {
      */
     private boolean readyForSql;
 
+    /**
+     * 遍历的属性
+     * @since 0.0.17
+     */
+    private MapperForeachProperty foreachProperty;
+
     public MapperSqlType getType() {
         return type;
     }
@@ -82,6 +89,14 @@ public class MapperSqlItem {
         this.readyForSql = readyForSql;
     }
 
+    public MapperForeachProperty getForeachProperty() {
+        return foreachProperty;
+    }
+
+    public void setForeachProperty(MapperForeachProperty foreachProperty) {
+        this.foreachProperty = foreachProperty;
+    }
+
     @Override
     public String toString() {
         return "MapperSqlItem{" +
@@ -90,6 +105,7 @@ public class MapperSqlItem {
                 ", refId='" + refId + '\'' +
                 ", testCondition='" + testCondition + '\'' +
                 ", readyForSql=" + readyForSql +
+                ", foreachProperty=" + foreachProperty +
                 '}';
     }
 

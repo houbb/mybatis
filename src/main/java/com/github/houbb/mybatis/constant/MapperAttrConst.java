@@ -80,4 +80,46 @@ public final class MapperAttrConst {
      */
     public static final String NAMESPACE = "namespace";
 
+    /**
+     * 它允许你指定一个集合，声明可以在元素体内使用的集合项（item）和索引（index）变量。
+     *
+     * 当使用可迭代对象或者数组时，index 是当前迭代的序号，item 的值是本次迭代获取到的元素。
+     * 当使用 Map 对象（或者 Map.Entry 对象的集合）时，index 是键，item 是值。
+     * @since 0.0.17
+     */
+    public static final String ITEM = "item";
+
+    /**
+     * 它允许你指定一个集合，声明可以在元素体内使用的集合项（item）和索引（index）变量。
+     *
+     * 当使用可迭代对象或者数组时，index 是当前迭代的序号，item 的值是本次迭代获取到的元素。
+     * 当使用 Map 对象（或者 Map.Entry 对象的集合）时，index 是键，item 是值。
+     * @since 0.0.17
+     */
+    public static final String INDEX = "index";
+
+    /**
+     * 集合的名称
+     * @since 0.0.17
+     */
+    public static final String COLLECTION = "collection";
+
+    /**
+     * 开始的元素
+     * @since 0.0.17
+     */
+    public static final String OPEN = "open";
+
+    /**
+     * 结束的元素
+     * @since 0.0.17
+     */
+    public static final String CLOSE = "close";
+
+    /**
+     * 分隔符号
+     * @since 0.0.17
+     */
+    public static final String SEPARATOR = "separator";
+
 }

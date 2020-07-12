@@ -6,9 +6,11 @@ import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.heaven.util.util.CollectionUtil;
 import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.constant.MapperAttrConst;
+import com.github.houbb.mybatis.constant.MapperForeachConst;
 import com.github.houbb.mybatis.constant.MapperTypeConst;
 import com.github.houbb.mybatis.constant.enums.MapperSqlType;
 import com.github.houbb.mybatis.exception.MybatisException;
+import com.github.houbb.mybatis.mapper.component.MapperForeachProperty;
 import com.github.houbb.mybatis.mapper.component.MapperResultMapItem;
 import com.github.houbb.mybatis.support.replace.ISqlReplace;
 import com.github.houbb.mybatis.support.replace.SqlReplaceResult;
@@ -249,12 +251,69 @@ public class MapperRegister {
                     sqlItem.setSql(defaultElement.getText().trim());
                     sqlItem.setTestCondition(defaultElement.attributeValue(MapperAttrConst.TEST));
                 }
+                if(MapperTypeConst.FOREACH.equals(type)) {
+                    initForeachSqlItem(sqlItem, defaultElement);
+                }
             }
 
             sqlItemList.add(sqlItem);
         }
 
         return sqlItemList;
+    }
+
+    /**
+     * 初始化 foreach 元素
+     *
+     * 1. list
+     * 2. set
+     * 3. map
+     *
+     * @param sqlItem 元素信息
+     * @param defaultElement xml 配置
+     * @since 0.0.17
+     */
+    private void initForeachSqlItem(MapperSqlItem sqlItem,
+                                    DefaultElement defaultElement) {
+        sqlItem.setType(MapperSqlType.FOREACH);
+        sqlItem.setSql(defaultElement.getText().trim());
+
+        // 直接 foreach 完整的 sql 构建出来，替换好固定的元素名称
+        String open = defaultElement.attributeValue(MapperAttrConst.OPEN);
+        String close = defaultElement.attributeValue(MapperAttrConst.CLOSE);
+        String separator = defaultElement.attributeValue(MapperAttrConst.SEPARATOR);
+        String item = defaultElement.attributeValue(MapperAttrConst.ITEM);
+        String index = defaultElement.attributeValue(MapperAttrConst.INDEX);
+        String collection = defaultElement.attributeValue(MapperAttrConst.COLLECTION);
+
+        // 默认值
+        if(StringUtil.isEmpty(open)) {
+            open = MapperForeachConst.OPEN;
+        }
+        if(StringUtil.isEmpty(close)) {
+            close = MapperForeachConst.CLOSE;
+        }
+        if(StringUtil.isEmpty(separator)) {
+            separator = MapperForeachConst.SEPARATOR;
+        }
+        if(StringUtil.isEmpty(item)) {
+            item = MapperForeachConst.ITEM;
+        }
+        if(StringUtil.isEmpty(index)) {
+            index = MapperForeachConst.INDEX;
+        }
+        if(StringUtil.isEmpty(collection)) {
+            collection = MapperForeachConst.COLLECTION;
+        }
+
+        MapperForeachProperty property = MapperForeachProperty.newInstance()
+                .open(open)
+                .close(close)
+                .index(index)
+                .item(item)
+                .collection(collection)
+                .separator(separator);
+        sqlItem.setForeachProperty(property);
     }
 
     /**

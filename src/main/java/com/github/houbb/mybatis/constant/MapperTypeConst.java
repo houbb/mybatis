@@ -21,6 +21,15 @@ public final class MapperTypeConst {
     public static final String IF = "if";
 
     /**
+     * foreach 循环的支持
+     *
+     * 你可以将任何可迭代对象（如 List、Set 等）、Map 对象或者数组对象作为集合参数传递给 foreach。
+     *
+     * @since 0.0.17
+     */
+    public static final String FOREACH = "foreach";
+
+    /**
      * 结果
      * @since 0.0.12
      */
