@@ -15,15 +15,6 @@ import java.util.Map;
  *
  * 条件：and or not
  * 比较 == != gt; lt;
- * <pre>
- *     ==
- *     !=
- *     <
- *     >
- *     <=
- *     >=
- *
- * </pre>
  * @since 0.0.16
  */
 public class IfSqlReplace implements ISqlReplace {
