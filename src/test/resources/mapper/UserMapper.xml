@@ -53,4 +53,20 @@
         and name = #{name}
     </select>
 
+    <select id = "selectByIdPlaceHolder" resultType="com.github.houbb.mybatis.domain.User">
+        select name, password from user
+        where id = #{id}
+    </select>
+
+    <select id = "selectByExample" resultType="com.github.houbb.mybatis.domain.User">
+        select name, password from user
+        where id = #{id}
+    </select>
+
+    <select id = "selectByExampleOrderBy" resultType="com.github.houbb.mybatis.domain.User">
+        select name, password from user
+        where id = #{ex.id}
+        order by ${orderBy}
+    </select>
+
 </mapper>

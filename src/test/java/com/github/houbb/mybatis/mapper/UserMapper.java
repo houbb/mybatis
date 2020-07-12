@@ -2,6 +2,7 @@ package com.github.houbb.mybatis.mapper;
 
 import com.github.houbb.mybatis.annotation.Param;
 import com.github.houbb.mybatis.domain.User;
+import com.github.houbb.mybatis.domain.UserExample;
 
 import java.util.List;
 import java.util.Map;
@@ -59,5 +60,30 @@ public interface UserMapper {
      * @since 0.0.13
      */
     User selectByIdAndName(@Param("id") long id, @Param("name") String name);
+
+    /**
+     * 查询对应的值
+     * @param id  ID 标识
+     * @return 结果
+     * @since 0.0.14
+     */
+    User selectByIdPlaceHolder(long id);
+
+    /**
+     * 查询对应的值
+     * @param example 查询对象
+     * @return 结果
+     * @since 0.0.14
+     */
+    User selectByExample(UserExample example);
+
+    /**
+     * 查询对应的值
+     * @param example 查询对象
+     * @param orderBy 排序信息
+     * @return 结果
+     * @since 0.0.14
+     */
+    User selectByExampleOrderBy(@Param("ex") UserExample example, @Param("orderBy") String orderBy);
 
 }

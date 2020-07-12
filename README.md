@@ -27,7 +27,7 @@
 <dependency>
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.12</version>
+    <version>0.0.14</version>
 </dependency>
 ```
 
@@ -104,24 +104,6 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 ```
 
 # 后期 road-map
-
-- [ ] 添加 `#{}` 的入参对象属性解析
-
-1. 多个属性反射获取
-
-为了逻辑的统一，直接比如 user.name，则利用属性的反射获取。
-
-1. 首先获取 user.name
-
-2. 再次处理 user 对应的 name field
-
-可以考虑优化：
-
-（1）直接根据 name 获取对应的名称
-
-（2）如果 name 不存在，则反射获取第一个参数的 field 值
-
-----------------------------------------------
 
 - [ ] 对于 CRUD 的全面支持
 

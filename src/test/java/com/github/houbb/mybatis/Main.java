@@ -3,6 +3,7 @@ package com.github.houbb.mybatis;
 import com.github.houbb.mybatis.config.Config;
 import com.github.houbb.mybatis.config.impl.XmlConfig;
 import com.github.houbb.mybatis.domain.User;
+import com.github.houbb.mybatis.domain.UserExample;
 import com.github.houbb.mybatis.mapper.UserMapper;
 import com.github.houbb.mybatis.session.SqlSession;
 import com.github.houbb.mybatis.session.impl.DefaultSessionFactory;
@@ -72,5 +73,32 @@ public class Main {
         System.out.println(userMapper.selectByIdAndName(1L, "ryo2"));
     }
 
+    /**
+     * @since 0.0.14
+     */
+    @Test
+    public void selectByIdPlaceHolderTest() {
+        System.out.println(userMapper.selectByIdPlaceHolder(1L));
+    }
+
+    /**
+     * @since 0.0.14
+     */
+    @Test
+    public void selectByExampleTest() {
+        UserExample userExample = new UserExample();
+        userExample.setId(1L);
+        System.out.println(userMapper.selectByExample(userExample));
+    }
+
+    /**
+     * @since 0.0.14
+     */
+    @Test
+    public void selectByExampleOrderByTest() {
+        UserExample userExample = new UserExample();
+        userExample.setId(1L);
+        System.out.println(userMapper.selectByExampleOrderBy(userExample, "id asc"));
+    }
 
 }

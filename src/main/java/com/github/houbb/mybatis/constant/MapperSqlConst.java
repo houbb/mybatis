@@ -46,4 +46,10 @@ public final class MapperSqlConst {
      */
     public static final String SINGLE_CHAR = "'";
 
+    /**
+     * 多级引用
+     * @since 0.0.14
+     */
+    public static final String MULTI_REF = ".";
+
 }
