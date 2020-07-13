@@ -103,6 +103,10 @@ public static void main(String[] args) {
 User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 2020}
 ```
 
+# 拓展阅读
+
+[从零开始手写 mybatis（一）MVP 版本](https://mp.weixin.qq.com/s/8eF7oFxgLsilqLYGOVtkGg)
+
 # 后期 road-map
 
 - [ ] 添加 `#{}` 的对象属性解析
