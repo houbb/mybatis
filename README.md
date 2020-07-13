@@ -109,13 +109,9 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 # 后期 road-map
 
-- [ ] 添加 `#{}` 的对象属性解析
-
-1. 单个属性随便命名
-
-2. 多个属性反射获取
-
 - [ ] 连接池管理
+
+- [ ] TX 管理
 
 - [ ] 数据库厂商标识（databaseIdProvider）
 
@@ -123,4 +119,4 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 - [ ] 添加 spring 整合实现
 
-- [ ] TX 管理
+- [ ] 添加 spring-boot 整合实现
