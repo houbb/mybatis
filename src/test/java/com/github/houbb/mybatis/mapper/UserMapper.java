@@ -42,7 +42,7 @@ public interface UserMapper {
      * @return 结果
      * @since 0.0.13
      */
-    User selectWithReplace(@Param("orderBy") String orderBy);
+    List<User> selectWithReplace(@Param("orderBy") String orderBy);
 
     /**
      * 查询 map
