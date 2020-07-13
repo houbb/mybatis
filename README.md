@@ -50,7 +50,7 @@ create table user
 ) CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 -- init
-insert into user (name, password, create_time) value ('luna', '123456', '20200701220301000');
+insert into user (name, password) value ('luna', '123456');
 ```
 
 - 配置文件
@@ -105,15 +105,13 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 # 后期 road-map
 
-- [ ] 对于 dynamic sql 的支持
+- [ ] 添加 `#{}` 的对象属性解析
 
-~~（1）if 的支持~~
+1. 单个属性随便命名
 
-（2）foreach 的支持
+2. 多个属性反射获取
 
 - [ ] 连接池管理
-
-- [ ] TX 管理
 
 - [ ] 数据库厂商标识（databaseIdProvider）
 
@@ -121,5 +119,4 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 - [ ] 添加 spring 整合实现
 
-- [ ] 添加 spring-boot 整合实现
-
+- [ ] TX 管理

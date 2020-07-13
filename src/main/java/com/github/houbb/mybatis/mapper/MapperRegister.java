@@ -1,6 +1,5 @@
 package com.github.houbb.mybatis.mapper;
 
-import com.github.houbb.heaven.util.common.ArgUtil;
 import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
 import com.github.houbb.heaven.util.util.CollectionUtil;
@@ -9,7 +8,6 @@ import com.github.houbb.mybatis.constant.MapperAttrConst;
 import com.github.houbb.mybatis.constant.MapperForeachConst;
 import com.github.houbb.mybatis.constant.MapperTypeConst;
 import com.github.houbb.mybatis.constant.enums.MapperSqlType;
-import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.mapper.component.MapperForeachProperty;
 import com.github.houbb.mybatis.mapper.component.MapperResultMapItem;
 import com.github.houbb.mybatis.support.replace.ISqlReplace;
