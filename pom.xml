@@ -5,7 +5,7 @@
 
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.17</version>
+    <version>0.0.18-SNAPSHOT</version>
 
     <properties>
         <!--============================== All Plugins START ==============================-->
