@@ -6,6 +6,7 @@ import com.github.houbb.mybatis.mapper.MapperMethod;
 import com.github.houbb.mybatis.plugin.Interceptor;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class ConfigAdaptor implements Config {
     }
 
     @Override
-    public DataSource getDataSource() {
+    public Connection getConnection() {
         return null;
     }
 

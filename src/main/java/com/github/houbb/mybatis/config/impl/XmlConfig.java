@@ -3,6 +3,7 @@ package com.github.houbb.mybatis.config.impl;
 import com.github.houbb.heaven.util.lang.ObjectUtil;
 import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
+import com.github.houbb.mybatis.constant.enums.TransactionIsolationLevel;
 import com.github.houbb.mybatis.datasource.unpooled.UnPooledDataSource;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
@@ -15,12 +16,16 @@ import com.github.houbb.mybatis.support.alias.TypeAliasRegister;
 import com.github.houbb.mybatis.support.alias.impl.DefaultTypeAliasRegister;
 import com.github.houbb.mybatis.support.factory.ObjectFactory;
 import com.github.houbb.mybatis.support.factory.impl.DefaultObjectFactory;
+import com.github.houbb.mybatis.transaction.Transaction;
+import com.github.houbb.mybatis.transaction.impl.JdbcTransaction;
+import com.github.houbb.mybatis.transaction.impl.ManageTransaction;
 import com.github.houbb.mybatis.util.XmlUtil;
 import org.dom4j.Element;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 import java.util.*;
 
 /**
@@ -51,6 +56,12 @@ public class XmlConfig extends ConfigAdaptor {
      * @since 0.0.8
      */
     private DataSource dataSource;
+
+    /**
+     * 事务管理器
+     * @since 0.0.18
+     */
+    private Transaction transaction;
 
     /**
      * mapper 注册类
@@ -93,6 +104,9 @@ public class XmlConfig extends ConfigAdaptor {
         // 初始化数据连接信息
         initDataSource();
 
+        // 初始化事务管理器
+        initTransaction();
+
         // 初始化对象工厂类
         initObjectFactory();
 
@@ -115,8 +129,8 @@ public class XmlConfig extends ConfigAdaptor {
     }
 
     @Override
-    public DataSource getDataSource() {
-        return this.dataSource;
+    public Connection getConnection() {
+        return this.transaction.getConnection();
     }
 
     @Override
@@ -198,6 +212,40 @@ public class XmlConfig extends ConfigAdaptor {
         } catch (NoSuchMethodException | IllegalAccessException
                 | InstantiationException | InvocationTargetException e) {
             throw new MybatisException("DataSource class must has public constructor with args properties!");
+        }
+    }
+
+    /**
+     * 初始化事务管理器
+     *
+     * @since 0.0.18
+     */
+    private void initTransaction() {
+        // 根据配置初始化连接信息
+        Element dsElem = root.element("transaction");
+        String type = dsElem.attributeValue("type");
+
+        Map<String, String> map = new HashMap<>();
+        for (Object property : dsElem.elements("property")) {
+            Element element = (Element) property;
+            String name = element.attributeValue("name");
+            String value = element.attributeValue("value");
+
+            map.put(name, value);
+        }
+
+        TransactionIsolationLevel level = TransactionIsolationLevel.READ_COMMITTED;
+        boolean autoCommit = "true".equals(map.get("autoCommit"));
+        String isolationLevelStr = map.get("isolationLevel");
+        if(StringUtil.isNotEmpty(isolationLevelStr)) {
+            level = TransactionIsolationLevel.valueOf(isolationLevelStr);
+        }
+
+        // jdbc
+        if("jdbc".equals(type)) {
+            this.transaction = new JdbcTransaction(dataSource, level, autoCommit);
+        } else {
+            this.transaction = new ManageTransaction(dataSource, level);
         }
     }
 

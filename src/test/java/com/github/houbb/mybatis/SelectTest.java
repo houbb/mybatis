@@ -70,7 +70,7 @@ public class SelectTest {
     @Test
     public void selectByIdAndNameTest() {
         System.out.println(userMapper.selectByIdAndName(1L, "ryo"));
-        System.out.println(userMapper.selectByIdAndName(1L, "ryo2"));
+//        System.out.println(userMapper.selectByIdAndName(1L, "ryo2"));
     }
 
     /**

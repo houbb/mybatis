@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-        <!ELEMENT configuration (dataSource?, mappers?, plugins?, typeAliases?, typeHandlers?, objectFactory?)>
+        <!ELEMENT configuration (dataSource?, transaction?, mappers?, plugins?, typeAliases?, typeHandlers?, objectFactory?)>
 
         <!ELEMENT typeAliases (typeAlias*)>
 
@@ -37,6 +37,9 @@
                 name CDATA #REQUIRED
                 value CDATA #REQUIRED
                 >
+
+        <!ELEMENT transaction (property*)>
+        <!ATTLIST transaction type (jdbc|manage) "manage">
 
         <!ELEMENT mappers (mapper*)>
         <!ELEMENT mapper EMPTY>

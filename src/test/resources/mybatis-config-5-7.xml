@@ -11,6 +11,11 @@
         <property name="password" value="123456"/>
     </dataSource>
 
+    <transaction type="jdbc">
+        <property name="autoCommit" value="true"/>
+        <property name="isolationLevel" value="READ_UNCOMMITTED"/>
+    </transaction>
+
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
     </mappers>

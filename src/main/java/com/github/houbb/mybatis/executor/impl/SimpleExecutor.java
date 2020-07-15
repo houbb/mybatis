@@ -71,7 +71,7 @@ public class SimpleExecutor implements Executor {
         String sql = buildPsSql(replaceResult.dynamicSqlItems());
         System.out.println("【sql】" + sql);
 
-        try(Connection connection = config.getDataSource().getConnection();
+        try(Connection connection = config.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
             // 2. 处理参数
             ParameterHandler parameterHandler = new ParameterHandler(preparedStatement, config);
@@ -105,7 +105,7 @@ public class SimpleExecutor implements Executor {
         String sql = buildPsSql(replaceResult.dynamicSqlItems());
         System.out.println("【sql】" + sql);
 
-        try(Connection connection = config.getDataSource().getConnection();
+        try(Connection connection = config.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
             // 2. 处理参数
             ParameterHandler parameterHandler = new ParameterHandler(preparedStatement, config);

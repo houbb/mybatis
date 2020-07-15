@@ -27,11 +27,11 @@ public interface Config {
                                  final String methodName);
 
     /**
-     * 数据库连接信息
+     * 获取数据库连接信息
      * @return 连接信息
-     * @since 0.0.1
+     * @since 0.0.18
      */
-    DataSource getDataSource();
+    Connection getConnection();
 
     /**
      * 获取拦截器列表
