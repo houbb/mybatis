@@ -107,6 +107,10 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 [从零开始手写 mybatis（一）MVP 版本](https://mp.weixin.qq.com/s/8eF7oFxgLsilqLYGOVtkGg)
 
+[手写 mybatis 系列（二）mybatis interceptor 插件机制详解](https://mp.weixin.qq.com/s?__biz=MzUyNjE3OTAyMw==&mid=2247484124&idx=1&sn=0547e9a6535c1de74fe570a1ed1f9099&chksm=fa138d7ccd64046a12343ab655dc748a48deeb2eae87aac29f49403eaedee99ed46c4923e9e9&cur_album_id=1406621227405688832&scene=189#wechat_redirect)
+
+[从零开始手写 mybatis （三）jdbc pool 从零实现数据库连接池](https://mp.weixin.qq.com/s?__biz=MzUyNjE3OTAyMw==&mid=2247484130&idx=1&sn=0819286a310c9d1f77e57c28ca454925&chksm=fa138d42cd6404545874def08da9870db5c8ab3f0777e310196f64ebaed40353c11cf0cae379&cur_album_id=1406621227405688832&scene=189#wechat_redirect)
+
 # 后期 road-map
 
 - [ ] 连接池管理
