@@ -3,9 +3,10 @@ package com.github.houbb.mybatis.executor.impl;
 import com.github.houbb.heaven.support.pipeline.Pipeline;
 import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.util.ArrayUtil;
+import com.github.houbb.log.integration.core.Log;
+import com.github.houbb.log.integration.core.LogFactory;
 import com.github.houbb.mybatis.annotation.Param;
 import com.github.houbb.mybatis.config.Config;
-import com.github.houbb.mybatis.constant.MapperTypeConst;
 import com.github.houbb.mybatis.constant.enums.MapperSqlType;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.executor.Executor;
@@ -27,10 +28,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 这里可以设置为是否使用插件模式。
@@ -44,6 +42,8 @@ import java.util.Map;
  * @since 0.0.1
  */
 public class SimpleExecutor implements Executor {
+
+    private static final Log LOG = LogFactory.getLog(SimpleExecutor.class);
 
     /**
      * 查询信息
@@ -69,7 +69,8 @@ public class SimpleExecutor implements Executor {
         List<String> psNames = replaceResult.psNames();
         //2.2 sql
         String sql = buildPsSql(replaceResult.dynamicSqlItems());
-        System.out.println("【sql】" + sql);
+        // 后续可以考虑添加一个拦截器？是否需要
+        LOG.info("[Executor Query] [SQL={}] [ARGS={}]", sql, Arrays.toString(args));
 
         try(Connection connection = config.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);) {
@@ -103,7 +104,7 @@ public class SimpleExecutor implements Executor {
         List<String> psNames = replaceResult.psNames();
         //2.2 sql
         String sql = buildPsSql(replaceResult.dynamicSqlItems());
-        System.out.println("【sql】" + sql);
+        LOG.info("[Executor update] [SQL={}] [ARGS={}]", sql, Arrays.toString(args));
 
         try(Connection connection = config.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);) {

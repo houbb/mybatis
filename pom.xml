@@ -24,16 +24,20 @@
 
         <!--============================== MAIN ==============================-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.compiler.level>1.7</project.compiler.level>
+        <project.compiler.level>1.8</project.compiler.level>
 
         <!--============================== INTER ==============================-->
-        <heaven.version>0.1.112</heaven.version>
+        <heaven.version>0.4.0</heaven.version>
+        <log-integration.version>1.1.8</log-integration.version>
+        <jdbc-pool.version>1.7.0</jdbc-pool.version>
 
         <!--============================== OTHER ==============================-->
-        <junit.version>4.12</junit.version>
-        <mysql.version>5.1.29</mysql.version>
+        <junit.version>4.13.1</junit.version>
+        <mysql.version>8.0.13</mysql.version>
         <dom4j.version>1.6.1</dom4j.version>
         <commons-jexl3.version>3.1</commons-jexl3.version>
+        <jmockit.version>1.34</jmockit.version>
+        <fastjson.version>2.0.31</fastjson.version>
     </properties>
 
 
@@ -47,6 +51,16 @@
             <artifactId>heaven</artifactId>
             <version>${heaven.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>log-integration</artifactId>
+            <version>${log-integration.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>jdbc-pool</artifactId>
+            <version>${jdbc-pool.version}</version>
+        </dependency>
 
         <!--============================== OTHER ==============================-->
         <dependency>
@@ -55,6 +69,17 @@
             <version>${junit.version}</version>
             <scope>test</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>${jmockit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

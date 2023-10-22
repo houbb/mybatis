@@ -22,7 +22,7 @@ public class SelectTest {
 
     @Before
     public void initUserMapper() {
-        Config config = new XmlConfig("mybatis-config-5-7.xml");
+        Config config = new XmlConfig("mybatis-config-8-0.xml");
 
         SqlSession sqlSession = new DefaultSessionFactory(config).openSession();
         this.userMapper = sqlSession.getMapper(UserMapper.class);

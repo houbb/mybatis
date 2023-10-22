@@ -81,8 +81,6 @@ public class ParameterHandler {
                 params.add(value);
                 typeHandler.setParameter(statement, i + 1, value);
             }
-
-            System.out.println("------ Prams: " + params);
         } catch (SQLException throwables) {
             throw new MybatisException(throwables);
         }

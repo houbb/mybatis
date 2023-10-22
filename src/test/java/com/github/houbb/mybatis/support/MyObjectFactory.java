@@ -22,4 +22,5 @@ public class MyObjectFactory extends DefaultObjectFactory {
 
         return super.newInstance(type);
     }
+
 }

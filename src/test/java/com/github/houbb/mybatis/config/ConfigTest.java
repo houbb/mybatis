@@ -6,8 +6,6 @@ import com.github.houbb.mybatis.mapper.UserMapper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Map;
-
 /**
  * @author binbin.hou
  * @since 0.0.1
@@ -16,13 +14,14 @@ public class ConfigTest {
 
     @Test
     public void xmlMapperTest() {
-        String path = "mybatis-config-5-7.xml";
+        String path = "mybatis-config-8-0.xml";
 
         Config config = new XmlConfig(path);
         MapperMethod mapperMethod = config.getMapperMethod(UserMapper.class,
                 "selectById");
 
-        System.out.println(mapperMethod.toString());
+        Assert.assertEquals("selectById", mapperMethod.getMethodName());
+        Assert.assertEquals("select name, password from user where id = #{id}", mapperMethod.getSql());
     }
 
 }

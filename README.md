@@ -27,7 +27,7 @@
 <dependency>
     <groupId>com.github.houbb</groupId>
     <artifactId>mybatis</artifactId>
-    <version>0.0.16</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
@@ -113,14 +113,22 @@ User{id=1, name='ryo', password='123456', createTime=Wed Jul 01 22:03:01 CST 202
 
 # 后期 road-map
 
-- [ ] 连接池管理
+- [x] 日志组合
 
-- [ ] TX 管理
+- [x] 连接池管理
 
-- [ ] 数据库厂商标识（databaseIdProvider）
+- [x] TX 管理
+
+~~- [ ] 数据库厂商标识（databaseIdProvider）~~
+
+- [ ] api 方法配置全接口，便于直接配置使用。
 
 - [ ] 添加 MBG
 
 - [ ] 添加 spring 整合实现
 
 - [ ] 添加 spring-boot 整合实现
+
+- [ ] 自增强-类似 mybatis-plus 模块。让组件使用起来更加方便
+
+保持核心功能的简单，保证使用的强大便捷。

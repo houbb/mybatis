@@ -3,8 +3,8 @@ package com.github.houbb.mybatis.config.impl;
 import com.github.houbb.heaven.util.lang.ObjectUtil;
 import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.heaven.util.lang.reflect.ClassUtil;
+import com.github.houbb.mybatis.constant.DataSourceConst;
 import com.github.houbb.mybatis.constant.enums.TransactionIsolationLevel;
-import com.github.houbb.mybatis.datasource.unpooled.UnPooledDataSource;
 import com.github.houbb.mybatis.exception.MybatisException;
 import com.github.houbb.mybatis.handler.type.handler.TypeHandler;
 import com.github.houbb.mybatis.handler.type.register.TypeHandlerRegister;
@@ -20,11 +20,13 @@ import com.github.houbb.mybatis.transaction.Transaction;
 import com.github.houbb.mybatis.transaction.impl.JdbcTransaction;
 import com.github.houbb.mybatis.transaction.impl.ManageTransaction;
 import com.github.houbb.mybatis.util.XmlUtil;
+import com.github.houbb.thread.pool.api.IDataSourceConfig;
+import com.github.houbb.thread.pool.bs.JdbcPoolBs;
+import com.github.houbb.thread.pool.model.DataSourceConfigDto;
 import org.dom4j.Element;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.*;
 
@@ -186,31 +188,72 @@ public class XmlConfig extends ConfigAdaptor {
     private void initDataSource() {
         // 根据配置初始化连接信息
         Element dsElem = root.element("dataSource");
-
-        Properties properties = new Properties();
-
+        DataSourceConfigDto dataSourceConfigDto = new DataSourceConfigDto();
         for (Object property : dsElem.elements("property")) {
             Element element = (Element) property;
             String name = element.attributeValue("name");
             String value = element.attributeValue("value");
 
-            final String key = "jdbc."+name;
-            properties.setProperty(key, value);
+            final String key = DataSourceConst.JDBC_PREFIX+name;
+
+            if(DataSourceConst.URL.equals(key)) {
+                dataSourceConfigDto.setJdbcUrl(value);
+            } else if(DataSourceConst.DRIVER.equals(key)) {
+                dataSourceConfigDto.setDriverClass(value);
+            } else if(DataSourceConst.USERNAME.equals(key)) {
+                dataSourceConfigDto.setUser(value);
+            } else if (DataSourceConst.PASSWORD.equals(key)){
+                dataSourceConfigDto.setPassword(value);
+            }
         }
 
         // 反射构建对象
-        String type = dsElem.attributeValue("type");
+        String datasourceType = dsElem.attributeValue("type");
+        this.dataSource = getDataSource(dataSourceConfigDto, datasourceType);
+    }
+
+    /**
+     * 获取对应的数据源
+     * @param configDto 配置
+     * @param type 类别
+     * @return 结果
+     * @since 0.1.0
+     */
+    protected DataSource getDataSource(final DataSourceConfigDto configDto,
+                                       String type) {
         if(StringUtil.isEmpty(type)) {
             // 后期可以调整为 pooled 实现
-            type = UnPooledDataSource.class.getName();
+            return JdbcPoolBs.newInstance()
+                    .username(configDto.getUser())
+                    .password(configDto.getPassword())
+                    .driverClass(configDto.getDriverClass())
+                    .url(configDto.getJdbcUrl())
+                    .pooled();
         }
 
+        // 通过反射
         Class<?> dataSourceClass = ClassUtil.getClass(type);
         try {
+            // 必须继承自 IDataSourceConfig
+            if(dataSourceClass.isAssignableFrom(IDataSourceConfig.class)) {
+                Object instance = ClassUtil.newInstance(dataSourceClass);
+                IDataSourceConfig dataSourceConfig = (IDataSourceConfig) instance;
+                dataSourceConfig.setUser(configDto.getUser());
+                dataSourceConfig.setPassword(configDto.getPassword());
+                dataSourceConfig.setDriverClass(configDto.getDriverClass());
+                dataSourceConfig.setJdbcUrl(configDto.getJdbcUrl());
+                return dataSourceConfig;
+            }
+
+            // 如果不是怎么办？
+            Properties properties = new Properties();
+            properties.setProperty(DataSourceConst.URL, configDto.getJdbcUrl());
+            properties.setProperty(DataSourceConst.DRIVER, configDto.getDriverClass());
+            properties.setProperty(DataSourceConst.USERNAME, configDto.getUser());
+            properties.setProperty(DataSourceConst.PASSWORD, configDto.getPassword());
             Constructor<?> constructor = dataSourceClass.getConstructor(Properties.class);
-            this.dataSource = (DataSource) constructor.newInstance(properties);
-        } catch (NoSuchMethodException | IllegalAccessException
-                | InstantiationException | InvocationTargetException e) {
+            return (DataSource) constructor.newInstance(properties);
+        } catch (Exception e) {
             throw new MybatisException("DataSource class must has public constructor with args properties!");
         }
     }

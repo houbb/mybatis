@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "mybatis-config.dtd">
+<configuration>
+
+    <dataSource>
+        <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/test?characterEncoding=utf-8&amp;serverTimezone=UTC&amp;useSSL=false"/>
+        <property name="username" value="root"/>
+        <property name="password" value="123456"/>
+    </dataSource>
+
+    <transaction type="jdbc">
+        <property name="autoCommit" value="true"/>
+        <property name="isolationLevel" value="READ_UNCOMMITTED"/>
+    </transaction>
+
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+    </mappers>
+
+    <plugins>
+        <plugin interceptor="com.github.houbb.mybatis.plugin.SimpleLogInterceptor"/>
+    </plugins>
+
+    <typeHandlers>
+        <typeHandler javaType="date" handler="com.github.houbb.mybatis.typehandler.DateTypeHandler"/>
+    </typeHandlers>
+
+    <objectFactory type="com.github.houbb.mybatis.support.MyObjectFactory"/>
+
+</configuration>

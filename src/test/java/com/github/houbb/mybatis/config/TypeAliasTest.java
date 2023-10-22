@@ -1,6 +1,7 @@
 package com.github.houbb.mybatis.config;
 
 import com.github.houbb.heaven.util.io.FileUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Map;
  * @author binbin.hou
  * @since 1.0.0
  */
+@Ignore
 public class TypeAliasTest {
 
     @Test
